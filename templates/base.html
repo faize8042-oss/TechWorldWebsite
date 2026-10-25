@@ -1,0 +1,36 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#0a0d19">
+    <meta name="description" content="{% block meta_description %}Tech World builds modern websites, software applications, e-commerce solutions, and AI-powered digital products.{% endblock %}">
+
+    <title>{% block title %}Tech World | Software Development{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <script src="{% static 'js/navigation.js' %}" defer></script>
+    <script src="{% static 'js/main.js' %}" defer></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    {% include "includes/navbar.html" %}
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "includes/footer.html" %}
+</body>
+</html>

@@ -1,0 +1,42 @@
+
+# Secrets
+.env
+.env.*
+
+# Python environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Version control and IDE files
+.git/
+.idea/
+.vscode/
+
+# Private contact attachments
+private_uploads/
+
+# Generated output
+staticfiles/
+.coverage
+htmlcov/
+.pytest_cache/
+
+
+# Uploaded media and database backups
+media/
+backups/
+*.sql
+*.sql.gz
+*.dump
+*.backup
+
+# Local databases
+*.sqlite3
+*.sqlite3-journal
+
+# Operating system files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,31 @@
+
+{% extends "base.html" %}
+
+{% block title %}Page Not Found | Tech World{% endblock %}
+
+{% block meta_description %}
+The requested page could not be found on Tech World.
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="card card-padding error-page">
+            <p class="eyebrow">ERROR 404</p>
+            <h1 class="text-gradient">Page not found</h1>
+            <p>
+                The page may have moved, or the address may be incorrect.
+            </p>
+            <div class="error-page-actions">
+                <a class="button button-primary" href="{% url 'home' %}">
+                    Return Home
+                </a>
+                <a class="button button-secondary"
+                   href="{% url 'contact:contact' %}">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

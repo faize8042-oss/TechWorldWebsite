@@ -1,0 +1,348 @@
+
+/* Tech World: global design system */
+
+:root {
+    color-scheme: dark;
+
+    --color-bg: #0a0d19;
+    --color-surface: #111629;
+    --color-surface-raised: #171d34;
+    --color-border: rgba(167, 180, 220, 0.16);
+
+    --color-text: #f4f6ff;
+    --color-text-muted: #a6aec7;
+
+    --color-blue: #4f8cff;
+    --color-violet: #9666ff;
+    --color-cyan: #54dcff;
+
+    --gradient-brand: linear-gradient(
+        115deg,
+        var(--color-blue),
+        var(--color-violet)
+    );
+
+    --container-width: 1180px;
+    --header-height: 78px;
+
+    --radius-small: 10px;
+    --radius-medium: 16px;
+    --radius-large: 24px;
+
+    --shadow-card: 0 18px 55px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="light"] {
+    color-scheme: light;
+
+    --color-bg: #f6f8ff;
+    --color-surface: #ffffff;
+    --color-surface-raised: #edf1ff;
+    --color-border: rgba(35, 50, 90, 0.14);
+
+    --color-text: #151b32;
+    --color-text-muted: #5e6780;
+
+    --shadow-card: 0 18px 45px rgba(32, 46, 90, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-height) + 20px);
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    background:
+        radial-gradient(
+            ellipse at 80% 0%,
+            rgba(86, 67, 190, 0.12),
+            transparent 38%
+        ),
+        var(--color-bg);
+    color: var(--color-text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+img,
+svg {
+    max-width: 100%;
+}
+
+img {
+    display: block;
+    height: auto;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--color-cyan);
+    outline-offset: 4px;
+}
+
+::selection {
+    color: #ffffff;
+    background: #6652d9;
+}
+
+.container {
+    width: min(var(--container-width), calc(100% - 48px));
+    margin-inline: auto;
+}
+
+.section {
+    padding-block: 88px;
+}
+
+.section-heading {
+    max-width: 720px;
+    margin: 0 auto 42px;
+    text-align: center;
+}
+
+.section-heading h2 {
+    margin: 12px 0;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.045em;
+}
+
+.section-heading p {
+    color: var(--color-text-muted);
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-cyan);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.eyebrow::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+}
+
+h1,
+h2,
+h3,
+p {
+    overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.2;
+}
+
+.text-gradient {
+    color: var(--color-violet);
+    background: var(--gradient-brand);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.muted {
+    color: var(--color-text-muted);
+}
+
+.skip-link {
+    position: fixed;
+    z-index: 1000;
+    top: 12px;
+    left: 12px;
+    padding: 10px 16px;
+    transform: translateY(-160%);
+    border-radius: var(--radius-small);
+    background: var(--color-text);
+    color: var(--color-bg);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+.site-header {
+    position: sticky;
+    z-index: 100;
+    top: 0;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    backdrop-filter: blur(18px);
+}
+
+.navbar {
+    display: flex;
+    min-height: var(--header-height);
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.brand {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 11px;
+    font-size: 1.25rem;
+    font-weight: 850;
+    letter-spacing: -0.04em;
+}
+
+.brand-mark {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--gradient-brand);
+    box-shadow: 0 5px 22px rgba(91, 102, 255, 0.25);
+    color: #ffffff;
+    font-size: 1.2rem;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+}
+
+.nav-link {
+    color: var(--color-text-muted);
+    font-size: 0.93rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link[aria-current="page"] {
+    color: var(--color-text);
+}
+
+.theme-toggle {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    place-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-surface);
+    cursor: pointer;
+}
+
+.theme-icon {
+    font-size: 1.1rem;
+}
+
+.menu-toggle {
+    display: none;
+}
+
+.site-footer {
+    margin-top: 60px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+.footer-main {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 60px;
+    padding-block: 56px;
+}
+
+.footer-brand {
+    max-width: 360px;
+}
+
+.footer-brand p {
+    margin-top: 18px;
+    color: var(--color-text-muted);
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.footer-column h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.footer-column a {
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+}
+
+.footer-column a:hover {
+    color: var(--color-blue);
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-block: 20px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+}
+
+.footer-bottom p {
+    margin: 0;
+}

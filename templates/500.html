@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+
+{% block title %}Server Error | Tech World{% endblock %}
+
+{% block meta_description %}
+Tech World encountered a temporary server error.
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="card card-padding error-page">
+            <p class="eyebrow">ERROR 500</p>
+            <h1 class="text-gradient">Something went wrong</h1>
+            <p>
+                We could not complete your request. Please try again later.
+            </p>
+            <div class="error-page-actions">
+                <a class="button button-primary" href="{% url 'home' %}">
+                    Return Home
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

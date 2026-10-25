@@ -1,0 +1,113 @@
+
+{% extends "base.html" %}
+
+{% block title %}Our Projects | Tech World{% endblock %}
+
+{% block meta_description %}
+Explore Tech World's published software, web development, e-commerce, and AI projects.
+{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="container page-hero-content">
+        <span class="eyebrow">Our portfolio</span>
+
+        <h1>
+            Ideas turned into
+            <span class="text-gradient">digital experiences.</span>
+        </h1>
+
+        <p>
+            Explore the projects we've chosen to share, including the
+            challenges addressed, technologies used, and solutions built.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if projects %}
+            <div class="project-grid">
+                {% for project in projects %}
+                    <article class="project-card">
+                        <a
+                            class="project-image"
+                            href="{{ project.get_absolute_url }}"
+                            aria-label="View {{ project.title }}"
+                        >
+                            {% if project.cover_image %}
+                                <img
+                                    src="{{ project.cover_image.url }}"
+                                    alt="Cover image for {{ project.title }}"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <div class="project-image-placeholder">
+                                    <span class="placeholder-mark">T</span>
+                                    <span>{{ project.category }}</span>
+                                </div>
+                            {% endif %}
+                        </a>
+
+                        <div class="project-card-content">
+                            <div class="project-meta">
+                                <span class="badge">{{ project.category }}</span>
+
+                                {% if project.featured %}
+                                    <span class="featured-label">Featured</span>
+                                {% endif %}
+                            </div>
+
+                            <h2>
+                                <a href="{{ project.get_absolute_url }}">
+                                    {{ project.title }}
+                                </a>
+                            </h2>
+
+                            <p>{{ project.summary }}</p>
+
+                            {% if project.technologies %}
+                                <div class="technology-list">
+                                    {% for technology in project.technologies %}
+                                        <span class="technology-tag">
+                                            {{ technology }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <a
+                                class="project-link"
+                                href="{{ project.get_absolute_url }}"
+                            >
+                                View project <span aria-hidden="true">↗</span>
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-portfolio card">
+                <div class="feature-icon empty-icon" aria-hidden="true">◇</div>
+
+                <h2>Our portfolio is taking shape.</h2>
+
+                <p>
+                    We're preparing the projects to feature here.
+                    Please check back soon.
+                </p>
+
+                <p class="muted">
+                    In the meantime, contact us to discuss your requirements.
+                </p>
+
+                <a class="button button-primary" href="/contact/">
+                    Discuss your project
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

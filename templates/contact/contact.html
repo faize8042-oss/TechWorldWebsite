@@ -1,0 +1,172 @@
+
+{% extends "base.html" %}
+
+{% block title %}Contact Tech World | Start a Project{% endblock %}
+
+{% block meta_description %}
+Contact Tech World about a website, web application, e-commerce project, custom software, AI solution, or automation requirement.
+{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="container page-hero-content">
+        <span class="eyebrow">Contact us</span>
+
+        <h1>
+            Let's talk about
+            <span class="text-gradient">your next project.</span>
+        </h1>
+
+        <p>
+            Share your goals and requirements. Provide as much useful
+            detail as you can, and we'll have the information needed
+            to review your enquiry.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container contact-layout">
+        <div class="contact-intro">
+            <span class="eyebrow">Start a conversation</span>
+            <h2>Tell us what you want to create.</h2>
+
+            <p>
+                Whether you're planning a new website, an application,
+                an online store, or an AI-powered feature, use this form
+                to describe what you have in mind.
+            </p>
+
+            <div class="contact-info-card">
+                <span class="contact-info-icon" aria-hidden="true">✉</span>
+                <div>
+                    <h3>Email enquiries</h3>
+                    <p>
+                        Submit the form with your email address and project
+                        details. We can use your information to respond
+                        to your enquiry.
+                    </p>
+                </div>
+            </div>
+
+            <div class="contact-info-card">
+                <span class="contact-info-icon" aria-hidden="true">◇</span>
+                <div>
+                    <h3>Helpful information</h3>
+                    <p>
+                        Include your goals, important features, preferred
+                        timeline, and any constraints you already know.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form-panel card card-padding">
+            <h2>Project enquiry</h2>
+            <p class="form-intro">
+                Fields marked with * are required.
+            </p>
+
+            {% if messages %}
+                <div class="form-messages" aria-live="polite">
+                    {% for message in messages %}
+                        <div class="form-message form-message-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="contact-form"
+            >
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-error-summary" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.name.id_for_label }}">
+                        Full name *
+                    </label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.email.id_for_label }}">
+                        Email address *
+                    </label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.project_type.id_for_label }}">
+                        Project type *
+                    </label>
+                    {{ form.project_type }}
+                    {% for error in form.project_type.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.budget_range.id_for_label }}">
+                        Estimated budget
+                    </label>
+                    {{ form.budget_range }}
+                    {% for error in form.budget_range.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.message.id_for_label }}">
+                        Project details *
+                    </label>
+                    {{ form.message }}
+                    {% for error in form.message.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.attachment.id_for_label }}">
+                        Optional attachment
+                    </label>
+                    {{ form.attachment }}
+                    <p class="field-help">
+                        PDF, PNG, JPG, or JPEG. Maximum 5 MB.
+                        Do not upload passwords or confidential information.
+                    </p>
+                    {% for error in form.attachment.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <button class="button button-primary form-submit" type="submit">
+                    Submit enquiry <span aria-hidden="true">↗</span>
+                </button>
+
+                <p class="form-privacy-note">
+                    Your details will be used to review and respond to
+                    your enquiry. Read our
+                    <a href="/privacy/">Privacy Policy</a>.
+                </p>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

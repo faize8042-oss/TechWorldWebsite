@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy | Tech World{% endblock %}
+
+{% block meta_description %}
+Learn how Tech World handles contact information, project enquiries,
+uploaded files, and website data.
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="section-heading">
+            <p class="eyebrow">LEGAL INFORMATION</p>
+            <h1 class="text-gradient">Privacy Policy</h1>
+            <p>
+                This policy explains how Tech World handles information
+                when you visit our website or contact us about a project.
+            </p>
+        </div>
+
+        <div class="card card-padding legal-content">
+            <p>
+                <strong>Last updated:</strong> 14 October 2026
+            </p>
+
+            <h2>1. Information We Collect</h2>
+            <p>
+                When you use our contact form, we may collect your name,
+                email address, project type, budget range, message, and
+                any attachment you choose to provide.
+            </p>
+
+
+            <p>
+                We collect limited analytics about visits to publicly
+                accessible pages of our website using a daily
+                pseudonymous identifier. Raw IP addresses are not
+                stored in our analytics records. Analytics records
+                are deleted according to our configured data
+                retention schedule. Although the identifier is
+                pseudonymous, it may still be considered personal
+                data under applicable privacy laws.
+            </p>
+
+
+            <p>
+                Our hosting provider and website infrastructure may also
+                process technical information required to deliver and
+                protect the website.
+            </p>
+
+            <h2>2. How We Use Your Information</h2>
+            <p>Information submitted through the contact form may be used to:</p>
+            <ul>
+                <li>Review and respond to your project enquiry.</li>
+                <li>Send an enquiry notification to our configured email inbox.</li>
+                <li>Maintain and manage enquiry records through authorized
+                    administrative access.
+                </li>
+                <li>Protect and maintain the website.</li>
+            </ul>
+
+            <h2>3. Contact Form Records and Attachments</h2>
+            <p>
+                Contact submissions are stored in our application database.
+                If you upload an attachment, it may be stored with the
+                application’s uploaded files.
+            </p>
+            <p>
+                Do not submit passwords, payment-card details, identity
+                documents, or other sensitive information through the
+                contact form.
+            </p>
+
+            <h2>4. Email Notifications</h2>
+            <p>
+                Contact enquiries are used to generate email notifications
+                through the configured email service. Email providers and
+                infrastructure providers may process information as needed
+                to deliver those messages.
+            </p>
+            <p>
+                Email delivery can fail. A submission may still be saved
+                even when its notification email cannot be delivered.
+            </p>
+
+            <h2>5. Data Retention</h2>
+            <p>
+                We retain enquiry records and attachments only for as long
+                as reasonably needed for communication, project management,
+                legitimate operational needs, and applicable legal
+                obligations. A precise retention schedule should be
+                established and followed by the website operator.
+            </p>
+
+            <h2>6. Sharing and Service Providers</h2>
+            <p>
+                We do not intend to sell contact-form information. Information
+                may be processed by service providers involved in hosting,
+                database operation, email delivery, security, and maintenance.
+                It may also be disclosed where required by applicable law.
+            </p>
+
+            <h2>7. Security</h2>
+            <p>
+                We use technical and organizational measures intended to
+                protect website data. No internet transmission or storage
+                system can be guaranteed completely secure.
+            </p>
+
+            <h2>8. Your Requests</h2>
+            <p>
+                Depending on applicable law, you may have rights to request
+                access to, correction of, or deletion of your personal
+                information. Contact the website operator using the email
+                address displayed on our Contact page to make a request.
+            </p>
+
+            <h2>9. Children</h2>
+            <p>
+                This website is intended for general business enquiries,
+                not for collecting personal information from children.
+            </p>
+
+            <h2>10. Changes to This Policy</h2>
+            <p>
+                This policy may be updated when website features,
+                operational practices, or legal requirements change.
+                The latest version will be published on this page.
+            </p>
+
+            <h2>11. Contact</h2>
+            <p>
+                For privacy questions, please use the contact information
+                available on our
+                <a href="{% url 'contact:contact' %}">Contact page</a>.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
