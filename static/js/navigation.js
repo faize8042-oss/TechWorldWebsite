@@ -1,5 +1,5 @@
 
-/* Tech World: responsive navigation */
+/* Codeventra Labs: responsive navigation */
 
 (() => {
     const menuButton = document.querySelector(".menu-toggle");

@@ -3,17 +3,26 @@ from io import BytesIO
 from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 
 from .forms import ContactSubmissionForm
 from .models import ContactSubmission
 
-from django.test import override_settings
+from django.core.cache import cache
 
+@override_settings(
+    CACHES={
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "contact-form-tests",
+        }
+    }
+)
 class ContactFormTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.url = reverse("contact:contact")
 
         self.valid_data = {
@@ -45,6 +54,22 @@ class ContactFormTests(TestCase):
         self.assertEqual(submission.email, "visitor@example.com")
 
         mock_send_mail.assert_called_once()
+        email = mock_send_mail.call_args.kwargs
+        self.assertIn("Codeventra Labs", email["subject"])
+        self.assertIn("Codeventra Labs", email["message"])
+
+    def test_site_pages_show_codeventra_brand(self):
+        for path in ("/", "/services/", "/about/", "/projects/", self.url):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, "Codeventra")
+                self.assertNotContains(response, "Tech World")
+
+    def test_homepage_shows_tagline(self):
+        response = self.client.get("/")
+
+        self.assertContains(response, "Engineering Ideas Into Reality.")
 
     @patch(
         "contact.views.send_mail",
@@ -155,9 +180,6 @@ class ContactFormTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn("attachment", form.errors)
-
-from django.core.cache import cache
-
 
 @override_settings(
     CACHES={

@@ -1,5 +1,5 @@
 
-/* Tech World: global design system */
+/* Codeventra Labs: global design system */
 
 :root {
     color-scheme: dark;
@@ -235,7 +235,7 @@ h3 {
     flex-shrink: 0;
     align-items: center;
     gap: 11px;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 850;
     letter-spacing: -0.04em;
 }
@@ -250,6 +250,10 @@ h3 {
     box-shadow: 0 5px 22px rgba(91, 102, 255, 0.25);
     color: #ffffff;
     font-size: 1.2rem;
+}
+
+.brand-name {
+    white-space: nowrap;
 }
 
 .nav-links {

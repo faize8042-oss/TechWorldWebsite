@@ -1,5 +1,5 @@
 
-/* Tech World: dark and light theme */
+/* Codeventra Labs: dark and light theme */
 
 (() => {
     const root = document.documentElement;
