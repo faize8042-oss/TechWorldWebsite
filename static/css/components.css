@@ -178,6 +178,10 @@
     position: relative;
     overflow: hidden;
     padding-block: clamp(65px, 9vw, 115px);
+    border-bottom: 1px solid var(--color-border);
+    background:
+        radial-gradient(ellipse at 78% 48%, rgba(87, 76, 210, 0.1), transparent 42%),
+        linear-gradient(180deg, transparent, rgba(72, 94, 190, 0.025));
 }
 
 .hero-layout {
@@ -188,16 +192,16 @@
 }
 
 .hero-copy h1 {
-    max-width: 720px;
-    margin: 25px 0 20px;
-    font-size: clamp(2.7rem, 5.2vw, 4.6rem);
+    max-width: 680px;
+    margin: 24px 0 20px;
+    font-size: clamp(2.8rem, 5.4vw, 4.8rem);
     font-weight: 850;
     letter-spacing: -0.065em;
     line-height: 1.04;
 }
 
 .hero-description {
-    max-width: 590px;
+    max-width: 560px;
     color: var(--color-text-muted);
     font-size: clamp(1rem, 1.4vw, 1.13rem);
 }
@@ -232,7 +236,7 @@
 .hero-visual {
     position: relative;
     display: grid;
-    min-height: 390px;
+    min-height: 430px;
     place-items: center;
     isolation: isolate;
 }
@@ -278,7 +282,7 @@
     border-radius: 20px;
     background: #10162a;
     box-shadow: 0 30px 100px rgba(24, 26, 80, 0.4);
-    transform: rotate(-2deg);
+    transform: rotate(-1.5deg);
 }
 
 .window-top {
@@ -390,14 +394,57 @@
     font-size: 1.15rem;
 }
 
+.floating-chip .chip-icon {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.92rem;
+}
+
+.home-services .feature-card {
+    min-height: 218px;
+}
+
+.home-services .feature-card:hover {
+    background: var(--color-surface-raised);
+}
+
+.home-services .feature-icon {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.home-services-link {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--color-cyan);
+    font-weight: 750;
+}
+
+.text-link:hover {
+    color: var(--color-blue);
+}
+
 .section-process {
     border-block: 1px solid var(--color-border);
     background: var(--color-surface);
 }
 
+.home-contact {
+    padding-top: 76px;
+}
+
 .process-card {
+    min-height: 170px;
     padding: 22px;
     border-left: 2px solid var(--color-border);
+    background: linear-gradient(110deg, rgba(106, 112, 255, 0.045), transparent 78%);
 }
 
 .process-number {
@@ -438,7 +485,7 @@
 
     .hero-visual {
         width: 100%;
-        min-height: 330px;
+        min-height: 350px;
         margin-top: 10px;
     }
 
@@ -469,7 +516,7 @@
     }
 
     .hero-visual {
-        min-height: 290px;
+        min-height: 270px;
     }
 
     .floating-chip {
@@ -480,6 +527,14 @@
     .code-visual {
         padding: 16px;
         font-size: 0.72rem;
+    }
+
+    .home-services .feature-card {
+        min-height: 0;
+    }
+
+    .home-contact {
+        padding-top: 54px;
     }
 }
  /*-----------------------*/

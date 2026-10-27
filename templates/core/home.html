@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Codeventra Labs | Software, Web Apps & AI{% endblock %}
@@ -9,173 +8,134 @@ Codeventra Labs builds web applications, custom software, AI solutions, and auto
 
 {% block content %}
 
-<section class="hero">
+<section class="hero" aria-labelledby="home-title">
     <div class="container hero-layout">
         <div class="hero-copy">
             <span class="badge">
-                <span class="badge-dot"></span>
-                Software development for modern businesses
+                <span class="badge-dot" aria-hidden="true"></span>
+                Thoughtful software for ambitious ideas
             </span>
 
-            <h1>
-                Turn your next idea into
-                <span class="text-gradient">something extraordinary.</span>
+            <h1 id="home-title">
+                Engineering your next idea into
+                <span class="text-gradient">something real.</span>
             </h1>
 
             <p class="hero-description">
-                We help businesses build better digital experiences through
-                modern websites, custom software, e-commerce, automation,
-                and AI-powered solutions.
+                We design and build websites, web applications, custom software,
+                e-commerce experiences, and practical automation around your needs.
             </p>
+
             <div class="hero-actions">
                 <a class="button button-primary" href="/contact/">
-                    Discuss your project <span aria-hidden="true">↗</span>
+                    Discuss your project <span aria-hidden="true">&#8599;</span>
                 </a>
-
                 <a class="button button-secondary" href="/services/">
                     Explore our services
                 </a>
             </div>
 
             <div class="hero-note">
-                <span class="hero-note-line"></span>
+                <span class="hero-note-line" aria-hidden="true"></span>
                 <p>Engineering Ideas Into Reality.</p>
             </div>
         </div>
 
-        <div class="hero-visual" aria-label="Illustration of digital technology">
+        <div class="hero-visual" aria-hidden="true">
             <div class="orb orb-one"></div>
             <div class="orb orb-two"></div>
 
             <div class="visual-window">
                 <div class="window-top">
-                    <div class="window-dots" aria-hidden="true">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                    <div class="window-dots">
+                        <span></span><span></span><span></span>
                     </div>
-                    <span class="window-label">digital_experience</span>
+                    <span class="window-label">a thoughtful way to build</span>
                 </div>
 
-                <div class="code-visual" aria-hidden="true">
-                    <p><span class="code-purple">const</span> idea = {</p>
-                    <p class="code-indent">
-                        <span class="code-blue">design</span>:
-                        <span class="code-green">"human-first"</span>,
-                    </p>
-                    <p class="code-indent">
-                        <span class="code-blue">technology</span>:
-                        <span class="code-green">"future-ready"</span>,
-                    </p>
-                    <p class="code-indent">
-                        <span class="code-blue">purpose</span>:
-                        <span class="code-green">"your vision"</span>
-                    </p>
+                <div class="code-visual">
+                    <p><span class="code-purple">const</span> project = {</p>
+                    <p class="code-indent"><span class="code-blue">goal</span>:
+                        <span class="code-green">"solve a real need"</span>,</p>
+                    <p class="code-indent"><span class="code-blue">design</span>:
+                        <span class="code-green">"clear &amp; considered"</span>,</p>
+                    <p class="code-indent"><span class="code-blue">build</span>:
+                        <span class="code-green">"made for your workflow"</span></p>
                     <p>};</p>
                     <br>
-                    <p><span class="code-purple">function</span>
-                        <span class="code-blue">buildFuture</span>() {</p>
-                    <p class="code-indent">return idea;</p>
-                    <p>}</p>
+                    <p><span class="code-purple">await</span> makeItUseful(project);</p>
                 </div>
 
                 <div class="visual-status">
                     <span class="status-dot"></span>
-                    Designed around your goals
+                    From first conversation to launch
                 </div>
             </div>
 
             <div class="floating-chip chip-top">
-                <span class="chip-icon">✦</span>
-                <span>Modern web</span>
+                <span class="chip-icon">{ }</span>
+                <span>Web &amp; software</span>
             </div>
-
             <div class="floating-chip chip-bottom">
-                <span class="chip-icon">⌘</span>
-                <span>AI & automation</span>
+                <span class="chip-icon">&gt;_</span>
+                <span>AI &amp; automation</span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="section">
+<section class="section home-services" aria-labelledby="services-title">
     <div class="container">
         <div class="section-heading">
             <span class="eyebrow">What we do</span>
-            <h2>Technology that works for <span class="text-gradient">your goals.</span></h2>
-            <p>
-                From your first website to a custom digital platform,
-                choose the services that fit your business needs.
-            </p>
+            <h2 id="services-title">The right technology for <span class="text-gradient">your next step.</span></h2>
+            <p>Practical digital services, shaped around your goals and the people who use them.</p>
         </div>
 
         <div class="grid grid-3">
             <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">⌘</div>
-                <h3>Websites & Web Apps</h3>
-                <p>
-                    Responsive websites and web applications designed
-                    for usability, performance, and growth.
-                </p>
+                <div class="feature-icon" aria-hidden="true">01</div>
+                <h3>Websites &amp; Web Apps</h3>
+                <p>Responsive websites and web applications designed for usability, performance, and growth.</p>
             </article>
-
             <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">◇</div>
+                <div class="feature-icon" aria-hidden="true">02</div>
                 <h3>E-commerce Solutions</h3>
-                <p>
-                    Online stores and digital shopping experiences,
-                    including WordPress and WooCommerce solutions.
-                </p>
+                <p>Online stores and digital shopping experiences, including WordPress and WooCommerce.</p>
             </article>
-
             <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">✳</div>
-                <h3>AI & Automation</h3>
-                <p>
-                    Practical AI-powered applications and automation
-                    ideas tailored to real workflows.
-                </p>
+                <div class="feature-icon" aria-hidden="true">03</div>
+                <h3>AI &amp; Automation</h3>
+                <p>Practical AI-powered applications and automation ideas tailored to real workflows.</p>
             </article>
-
             <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">⚙</div>
+                <div class="feature-icon" aria-hidden="true">04</div>
                 <h3>Custom Software</h3>
-                <p>
-                    Software solutions shaped around your processes,
-                    requirements, and business challenges.
-                </p>
+                <p>Software solutions shaped around your processes, requirements, and business challenges.</p>
             </article>
-
             <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">↗</div>
-                <h3>Performance & SEO</h3>
-                <p>
-                    Improve website speed, accessibility, discoverability,
-                    and the overall user experience.
-                </p>
+                <div class="feature-icon" aria-hidden="true">05</div>
+                <h3>Performance &amp; SEO</h3>
+                <p>Improve website speed, accessibility, discoverability, and the overall user experience.</p>
             </article>
-
             <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">◎</div>
-                <h3>Maintenance & Support</h3>
-                <p>
-                    Ongoing improvements, updates, troubleshooting,
-                    and technical support for digital products.
-                </p>
+                <div class="feature-icon" aria-hidden="true">06</div>
+                <h3>Maintenance &amp; Support</h3>
+                <p>Ongoing improvements, updates, troubleshooting, and technical support for digital products.</p>
             </article>
+        </div>
+        <div class="home-services-link">
+            <a class="text-link" href="/services/">View all services <span aria-hidden="true">&#8594;</span></a>
         </div>
     </div>
 </section>
 
-<section class="section section-process">
+<section class="section section-process" aria-labelledby="process-title">
     <div class="container">
         <div class="section-heading">
             <span class="eyebrow">How we work</span>
-            <h2>A clear path from idea to <span class="text-gradient">delivery.</span></h2>
-            <p>
-                A straightforward process helps keep your project focused
-                and makes each next step clear.
-            </p>
+            <h2 id="process-title">A clear path from idea to <span class="text-gradient">delivery.</span></h2>
+            <p>A straightforward process keeps the work focused and the next step clear.</p>
         </div>
 
         <div class="grid grid-4">
@@ -184,43 +144,36 @@ Codeventra Labs builds web applications, custom software, AI solutions, and auto
                 <h3>Discover</h3>
                 <p>Understand your goals, audience, and requirements.</p>
             </article>
-
             <article class="process-card">
                 <span class="process-number">02</span>
-                <h3>Plan & Design</h3>
+                <h3>Plan &amp; Design</h3>
                 <p>Define the approach, structure, and user experience.</p>
             </article>
-
             <article class="process-card">
                 <span class="process-number">03</span>
-                <h3>Build & Test</h3>
+                <h3>Build &amp; Test</h3>
                 <p>Develop the solution and check it carefully.</p>
             </article>
-
             <article class="process-card">
                 <span class="process-number">04</span>
-                <h3>Launch & Improve</h3>
+                <h3>Launch &amp; Improve</h3>
                 <p>Prepare for launch and identify future improvements.</p>
             </article>
         </div>
     </div>
 </section>
 
-<section class="section">
+<section class="section home-contact" aria-labelledby="contact-title">
     <div class="container">
         <div class="cta-panel">
             <div>
                 <span class="eyebrow">Have a project in mind?</span>
-                <h2>Let's build something meaningful together.</h2>
-                <p>
-                    Tell us what you want to create, and we can discuss
-                    the next steps.
-                </p>
+                <h2 id="contact-title">Let's build something meaningful together.</h2>
+                <p>Tell us what you want to create, and we can discuss the next steps.</p>
             </div>
-
             <div class="cta-actions">
                 <a class="button button-primary" href="/contact/">
-                    Start a conversation <span aria-hidden="true">↗</span>
+                    Start a conversation <span aria-hidden="true">&#8599;</span>
                 </a>
             </div>
         </div>
