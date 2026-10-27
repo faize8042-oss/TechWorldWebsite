@@ -1,5 +1,5 @@
-
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Contact Codeventra Labs | Start a Project{% endblock %}
 
@@ -7,166 +7,117 @@
 Contact Codeventra Labs about a website, web application, e-commerce project, custom software, AI solution, or automation requirement.
 {% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
+{% endblock %}
+
 {% block content %}
-
-<section class="page-hero">
-    <div class="container page-hero-content">
-        <span class="eyebrow">Contact us</span>
-
-        <h1>
-            Let's talk about
-            <span class="text-gradient">your next project.</span>
-        </h1>
-
-        <p>
-            Share your goals and requirements. Provide as much useful
-            detail as you can, and we'll have the information needed
-            to review your enquiry.
-        </p>
+<section class="contact-hero">
+    <div class="container contact-hero-content">
+        <span class="eyebrow">Contact Codeventra Labs</span>
+        <h1>Let’s make your <span class="text-gradient">next idea real.</span></h1>
+        <p>Tell us what you’re working towards. Whether you have a detailed brief or an early idea, a little context helps us understand how we can help.</p>
+        <a class="contact-hero-link" href="#project-enquiry">Share your project <span aria-hidden="true">↓</span></a>
     </div>
 </section>
 
-<section class="section">
+<section class="section contact-section" aria-labelledby="enquiry-heading">
     <div class="container contact-layout">
-        <div class="contact-intro">
-            <span class="eyebrow">Start a conversation</span>
-            <h2>Tell us what you want to create.</h2>
+        <aside class="contact-intro" aria-labelledby="contact-guide-heading">
+            <span class="eyebrow">A useful starting point</span>
+            <h2 id="contact-guide-heading">What are you hoping to build?</h2>
+            <p>Use the form to outline the challenge, the people it’s for, and what a good result would look like. You don’t need every answer yet.</p>
 
-            <p>
-                Whether you're planning a new website, an application,
-                an online store, or an AI-powered feature, use this form
-                to describe what you have in mind.
-            </p>
-
-            <div class="contact-info-card">
-                <span class="contact-info-icon" aria-hidden="true">✉</span>
-                <div>
-                    <h3>Email enquiries</h3>
-                    <p>
-                        Submit the form with your email address and project
-                        details. We can use your information to respond
-                        to your enquiry.
-                    </p>
-                </div>
+            <div class="contact-guide">
+                <h3>Helpful details to include</h3>
+                <ul>
+                    <li>Your goals and intended users</li>
+                    <li>Key features or services needed</li>
+                    <li>Any existing website, system, or design</li>
+                    <li>Preferred timing, budget, or constraints</li>
+                </ul>
             </div>
+            <p class="contact-guide-note">Please don’t include passwords or confidential information. An attachment is optional if a brief or reference would help explain the project.</p>
+        </aside>
 
-            <div class="contact-info-card">
-                <span class="contact-info-icon" aria-hidden="true">◇</span>
-                <div>
-                    <h3>Helpful information</h3>
-                    <p>
-                        Include your goals, important features, preferred
-                        timeline, and any constraints you already know.
-                    </p>
-                </div>
+        <div class="contact-form-panel card card-padding" id="project-enquiry">
+            <div class="contact-form-heading">
+                <span class="eyebrow">Project enquiry</span>
+                <h2 id="enquiry-heading">Tell us about your project</h2>
+                <p class="form-intro">Fields marked with <span aria-hidden="true">*</span> are required.</p>
             </div>
-        </div>
-
-        <div class="contact-form-panel card card-padding">
-            <h2>Project enquiry</h2>
-            <p class="form-intro">
-                Fields marked with * are required.
-            </p>
 
             {% if messages %}
                 <div class="form-messages" aria-live="polite">
                     {% for message in messages %}
-                        <div class="form-message form-message-{{ message.tags }}">
+                        <div class="form-message form-message-{{ message.tags }}" role="status">
                             {{ message }}
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <form
-                method="post"
-                enctype="multipart/form-data"
-                class="contact-form"
-            >
+            <form method="post" enctype="multipart/form-data" class="contact-form">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
-                    <div class="form-error-summary" role="alert">
-                        {{ form.non_field_errors }}
-                    </div>
+                    <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
                 {% endif %}
 
                 <div class="form-field">
-                    <label for="{{ form.name.id_for_label }}">
-                        Full name *
-                    </label>
+                    <label for="{{ form.name.id_for_label }}">Full name <span aria-hidden="true">*</span></label>
                     {{ form.name }}
-                    {% for error in form.name.errors %}
-                        <p class="field-error">{{ error }}</p>
-                    {% endfor %}
+                    {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
-
                 <div class="form-field">
-                    <label for="{{ form.email.id_for_label }}">
-                        Email address *
-                    </label>
+                    <label for="{{ form.email.id_for_label }}">Email address <span aria-hidden="true">*</span></label>
                     {{ form.email }}
-                    {% for error in form.email.errors %}
-                        <p class="field-error">{{ error }}</p>
-                    {% endfor %}
+                    {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
-
-                <div class="form-field">
-                    <label for="{{ form.project_type.id_for_label }}">
-                        Project type *
-                    </label>
-                    {{ form.project_type }}
-                    {% for error in form.project_type.errors %}
-                        <p class="field-error">{{ error }}</p>
-                    {% endfor %}
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="{{ form.project_type.id_for_label }}">Project type <span aria-hidden="true">*</span></label>
+                        {{ form.project_type }}
+                        {% for error in form.project_type.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label for="{{ form.budget_range.id_for_label }}">Estimated budget</label>
+                        {{ form.budget_range }}
+                        {% for error in form.budget_range.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
                 </div>
-
                 <div class="form-field">
-                    <label for="{{ form.budget_range.id_for_label }}">
-                        Estimated budget
-                    </label>
-                    {{ form.budget_range }}
-                    {% for error in form.budget_range.errors %}
-                        <p class="field-error">{{ error }}</p>
-                    {% endfor %}
-                </div>
-
-                <div class="form-field">
-                    <label for="{{ form.message.id_for_label }}">
-                        Project details *
-                    </label>
+                    <label for="{{ form.message.id_for_label }}">Project details <span aria-hidden="true">*</span></label>
                     {{ form.message }}
-                    {% for error in form.message.errors %}
-                        <p class="field-error">{{ error }}</p>
-                    {% endfor %}
+                    <p class="field-help">Describe your goals, requirements, intended users, and any timing or constraints you have in mind.</p>
+                    {% for error in form.message.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
-
                 <div class="form-field">
-                    <label for="{{ form.attachment.id_for_label }}">
-                        Optional attachment
-                    </label>
+                    <label for="{{ form.attachment.id_for_label }}">Optional attachment</label>
                     {{ form.attachment }}
-                    <p class="field-help">
-                        PDF, PNG, JPG, or JPEG. Maximum 5 MB.
-                        Do not upload passwords or confidential information.
-                    </p>
-                    {% for error in form.attachment.errors %}
-                        <p class="field-error">{{ error }}</p>
-                    {% endfor %}
+                    <p class="field-help">PDF, PNG, JPG, or JPEG. Maximum 5 MB. Do not upload passwords or confidential information.</p>
+                    {% for error in form.attachment.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
-                <button class="button button-primary form-submit" type="submit">
-                    Submit enquiry <span aria-hidden="true">↗</span>
-                </button>
-
-                <p class="form-privacy-note">
-                    Your details will be used to review and respond to
-                    your enquiry. Read our
-                    <a href="/privacy/">Privacy Policy</a>.
-                </p>
+                <button class="button button-primary form-submit" type="submit">Send project enquiry <span aria-hidden="true">→</span></button>
+                <p class="form-privacy-note">Your details will be used to review and respond to your enquiry. Read our <a href="/privacy/">Privacy Policy</a>.</p>
             </form>
         </div>
     </div>
 </section>
 
+<section class="contact-process-section" aria-labelledby="process-heading">
+    <div class="container">
+        <div class="contact-process-heading">
+            <span class="eyebrow">From enquiry to next steps</span>
+            <h2 id="process-heading">A clear starting point</h2>
+            <p>Each project is different. The first conversation helps us understand yours.</p>
+        </div>
+        <ol class="contact-process-list">
+            <li><span class="process-step">01</span><div><h3>Share the context</h3><p>Send your goals, requirements, and any useful references through the form.</p></div></li>
+            <li><span class="process-step">02</span><div><h3>We review the enquiry</h3><p>We consider the details you provide and what you’re looking to achieve.</p></div></li>
+            <li><span class="process-step">03</span><div><h3>Discuss a way forward</h3><p>If there’s a fit, we can clarify the scope and explore practical next steps together.</p></div></li>
+        </ol>
+    </div>
+</section>
 {% endblock %}
