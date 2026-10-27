@@ -1,93 +1,68 @@
-
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ project.title }} | Codeventra Labs Projects{% endblock %}
-
 {% block meta_description %}{{ project.summary }}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
 {% block content %}
-
-<section class="page-hero">
-    <div class="container page-hero-content project-detail-heading">
-        <a class="back-link" href="{% url 'projects:list' %}">
-            <span aria-hidden="true">←</span> Back to projects
-        </a>
-
-        <span class="eyebrow">{{ project.category }}</span>
-
-        <h1>{{ project.title }}</h1>
-
-        <p>{{ project.summary }}</p>
-
-        <span class="badge">{{ project.get_project_type_display }}</span>
+<section class="project-detail-hero" aria-labelledby="project-title">
+    <div class="container project-detail-heading">
+        <a class="back-link" href="{% url 'projects:list' %}"><span aria-hidden="true">←</span> All projects</a>
+        <div class="project-detail-heading-main">
+            <span class="eyebrow">{{ project.category }}</span>
+            <h1 id="project-title">{{ project.title }}</h1>
+            <p>{{ project.summary }}</p>
+        </div>
+        <span class="project-type-label">{{ project.get_project_type_display }}</span>
     </div>
 </section>
 
-<section class="section">
+<section class="section project-detail-section" aria-label="Project information">
     <div class="container project-detail-layout">
         <article class="project-description">
             {% if project.cover_image %}
-                <img
-                    class="project-detail-image"
-                    src="{{ project.cover_image.url }}"
-                    alt="Cover image for {{ project.title }}"
-                >
+                <figure class="project-detail-visual">
+                    <img class="project-detail-image" src="{{ project.cover_image.url }}" alt="Cover image for {{ project.title }}">
+                </figure>
+            {% else %}
+                <div class="project-detail-placeholder" role="img" aria-label="No cover image is available for {{ project.title }}">
+                    <span class="placeholder-mark">CV<span>.</span></span>
+                    <span class="placeholder-category">{{ project.category }}</span>
+                    <span class="placeholder-line"></span>
+                </div>
             {% endif %}
-
-            <h2>About this project</h2>
-
-            <div class="project-long-description">
-                {{ project.description|linebreaks }}
+            <div class="project-description-copy">
+                <span class="eyebrow">Project overview</span>
+                <h2>About this project</h2>
+                <div class="project-long-description">{{ project.description|linebreaks }}</div>
             </div>
         </article>
 
-        <aside class="project-sidebar card card-padding">
-            <h2>Project details</h2>
-
+        <aside class="project-sidebar card card-padding" aria-labelledby="project-details-title">
+            <span class="eyebrow">At a glance</span>
+            <h2 id="project-details-title">Project details</h2>
             <dl class="project-facts">
                 <dt>Category</dt>
                 <dd>{{ project.category }}</dd>
-
                 <dt>Project type</dt>
                 <dd>{{ project.get_project_type_display }}</dd>
-
                 {% if project.technologies %}
                     <dt>Technologies</dt>
-                    <dd>
-                        <div class="technology-list">
-                            {% for technology in project.technologies %}
-                                <span class="technology-tag">
-                                    {{ technology }}
-                                </span>
-                            {% endfor %}
-                        </div>
-                    </dd>
+                    <dd><div class="technology-list">{% for technology in project.technologies %}<span class="technology-tag">{{ technology }}</span>{% endfor %}</div></dd>
                 {% endif %}
             </dl>
-
-            {% if project.live_url %}
-                <a
-                    class="button button-primary project-external-link"
-                    href="{{ project.live_url }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Visit live project <span aria-hidden="true">↗</span>
-                </a>
+            {% if project.live_url or project.github_url %}
+                <div class="project-sidebar-links">
+                    {% if project.live_url %}<a class="button button-primary project-external-link" href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer">Visit live project <span aria-hidden="true">↗</span></a>{% endif %}
+                    {% if project.github_url %}<a class="button button-secondary project-external-link" href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer">View source code <span aria-hidden="true">↗</span></a>{% endif %}
+                </div>
             {% endif %}
-
-            {% if project.github_url %}
-                <a
-                    class="button button-secondary project-external-link"
-                    href="{{ project.github_url }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    View source code <span aria-hidden="true">↗</span>
-                </a>
-            {% endif %}
+            <a class="project-back-bottom" href="{% url 'projects:list' %}"><span aria-hidden="true">←</span> Back to all projects</a>
         </aside>
     </div>
 </section>
-
 {% endblock %}

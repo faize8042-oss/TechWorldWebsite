@@ -1,113 +1,85 @@
-
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Projects | Codeventra Labs{% endblock %}
 
 {% block meta_description %}
-Explore software, web development, e-commerce, and AI projects published by Codeventra Labs.
+Explore selected software, web development, e-commerce, and AI projects from Codeventra Labs.
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
 {% endblock %}
 
 {% block content %}
-
-<section class="page-hero">
-    <div class="container page-hero-content">
-        <span class="eyebrow">Our portfolio</span>
-
-        <h1>
-            Ideas turned into
-            <span class="text-gradient">digital experiences.</span>
-        </h1>
-
-        <p>
-            Explore the projects we've chosen to share, including the
-            challenges addressed, technologies used, and solutions built.
-        </p>
+<section class="projects-hero" aria-labelledby="projects-title">
+    <div class="container projects-hero-inner">
+        <div class="projects-hero-copy">
+            <span class="eyebrow">Selected work</span>
+            <h1 id="projects-title">Engineering ideas <span class="text-gradient">into reality.</span></h1>
+            <p>A closer look at the published digital products and software from Codeventra Labs, with the details available to share.</p>
+            <a class="projects-hero-link" href="{% url 'contact:contact' %}">Have a project in mind? <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="projects-hero-aside" aria-hidden="true">
+            <span class="projects-hero-index">CV / WORK</span>
+            <span class="projects-hero-rule"></span>
+            <span class="projects-hero-caption">A selection of our work</span>
+        </div>
     </div>
 </section>
 
-<section class="section">
+<section class="section projects-section" aria-label="Portfolio projects">
     <div class="container">
         {% if projects %}
+            <div class="projects-section-heading">
+                <div>
+                    <span class="eyebrow">The portfolio</span>
+                    <h2>Work, thoughtfully made.</h2>
+                </div>
+                <p>Explore the projects and the technologies behind them.</p>
+            </div>
             <div class="project-grid">
                 {% for project in projects %}
                     <article class="project-card">
-                        <a
-                            class="project-image"
-                            href="{{ project.get_absolute_url }}"
-                            aria-label="View {{ project.title }}"
-                        >
+                        <a class="project-image" href="{{ project.get_absolute_url }}" aria-label="View {{ project.title }}">
                             {% if project.cover_image %}
-                                <img
-                                    src="{{ project.cover_image.url }}"
-                                    alt="Cover image for {{ project.title }}"
-                                    loading="lazy"
-                                >
+                                <img src="{{ project.cover_image.url }}" alt="Cover image for {{ project.title }}" loading="lazy">
+                                <span class="project-image-index" aria-hidden="true">PROJECT {{ forloop.counter|stringformat:"02d" }}</span>
                             {% else %}
-                                <div class="project-image-placeholder">
-                                    <span class="placeholder-mark">C</span>
-                                    <span>{{ project.category }}</span>
+                                <div class="project-image-placeholder" aria-hidden="true">
+                                    <span class="placeholder-mark">CV<span>.</span></span>
+                                    <span class="placeholder-category">{{ project.category }}</span>
+                                    <span class="placeholder-line"></span>
+                                    <span class="placeholder-note">Project preview</span>
                                 </div>
                             {% endif %}
                         </a>
-
                         <div class="project-card-content">
                             <div class="project-meta">
                                 <span class="badge">{{ project.category }}</span>
-
-                                {% if project.featured %}
-                                    <span class="featured-label">Featured</span>
-                                {% endif %}
+                                {% if project.featured %}<span class="featured-label"><span aria-hidden="true">✦</span> Featured</span>{% endif %}
                             </div>
-
-                            <h2>
-                                <a href="{{ project.get_absolute_url }}">
-                                    {{ project.title }}
-                                </a>
-                            </h2>
-
+                            <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
                             <p>{{ project.summary }}</p>
-
                             {% if project.technologies %}
-                                <div class="technology-list">
-                                    {% for technology in project.technologies %}
-                                        <span class="technology-tag">
-                                            {{ technology }}
-                                        </span>
-                                    {% endfor %}
+                                <div class="technology-list" aria-label="Technologies">
+                                    {% for technology in project.technologies %}<span class="technology-tag">{{ technology }}</span>{% endfor %}
                                 </div>
                             {% endif %}
-
-                            <a
-                                class="project-link"
-                                href="{{ project.get_absolute_url }}"
-                            >
-                                View project <span aria-hidden="true">↗</span>
-                            </a>
+                            <a class="project-link" href="{{ project.get_absolute_url }}">Explore project <span aria-hidden="true">↗</span></a>
                         </div>
                     </article>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-portfolio card">
-                <div class="feature-icon empty-icon" aria-hidden="true">◇</div>
-
-                <h2>Our portfolio is taking shape.</h2>
-
-                <p>
-                    We're preparing the projects to feature here.
-                    Please check back soon.
-                </p>
-
-                <p class="muted">
-                    In the meantime, contact us to discuss your requirements.
-                </p>
-
-                <a class="button button-primary" href="/contact/">
-                    Discuss your project
-                </a>
+            <div class="empty-portfolio" role="status">
+                <span class="empty-portfolio-mark" aria-hidden="true">CV<span>.</span></span>
+                <span class="eyebrow">Portfolio update</span>
+                <h2>No projects are published yet.</h2>
+                <p>There are no published projects to show right now. Get in touch to talk about what you’re looking to build.</p>
+                <a class="button button-primary" href="{% url 'contact:contact' %}">Contact Codeventra Labs <span aria-hidden="true">↗</span></a>
             </div>
         {% endif %}
     </div>
 </section>
-
 {% endblock %}
