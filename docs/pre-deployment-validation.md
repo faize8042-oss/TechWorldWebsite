@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `cf2fdc0315c2a2093f006069d5b5c23f3c04cf44` (`docs: prohibit hosting service checkout`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `83fe8ad0c5f889a5af32cfbb4ca46b499afc23da` (`docs: prohibit VPS creation in this phase`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -161,6 +161,7 @@ Several blockers require application or deployment-template changes. They are do
 - [DEFERRED] Do not register or purchase a domain, create a hosting account, check out or purchase hosting services, create a Hetzner server or any other VPS, start provider trials, or add paid services in this phase.
 - [DEFERRED] Do not configure or change public DNS, publish an IP address, request or install a production certificate, expose the site publicly, or deploy production services.
 - [DEFERRED] Do not create production credentials or place them in the repository, local `.env`, command history, rendered Compose output, or logs. The user's `.env` access restriction remains in force.
+- [DEFERRED] Do not activate or load production environment variables in this local phase; do not set `DEPLOYMENT_MODE=production` or source a production environment file.
 - [DEFERRED] Do not enable public indexing, set a real production SEO origin, or submit sitemaps. Keep SEO indexing disabled until its separate approval gate is satisfied.
 - [PROPOSED] The $10–20 USD monthly budget and Hetzner preference are planning constraints only. Recheck provider availability, eligibility, taxes, region, IPv4, backups, domain, email, and total checkout cost immediately before any decision. If the full cost exceeds budget, stop for a new decision; do not silently omit independent backups or weaken security to fit the estimate.
 - Any future action outside these local restrictions requires its applicable `[PENDING APPROVAL]` gate and explicit authorization before execution. No provider or registrar was contacted for this update.
