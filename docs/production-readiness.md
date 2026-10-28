@@ -2,6 +2,8 @@
 
 This is a preparation guide. The application has not been deployed, the planned domain and DNS are unverified, and HTTPS has not been configured.
 
+See the proposed [deployment architecture](deployment-architecture.md), [hosting cost plan](hosting-cost-plan.md), and [launch checklist](launch-checklist.md) for the isolated production design. These are planning artifacts only; no production behavior has been verified.
+
 ## Current architecture
 
 Docker Compose runs Django 5.2 under Gunicorn, PostgreSQL 17, Redis 7, and Nginx. WhiteNoise serves collected static assets. Nginx currently listens on HTTP and proxies to Gunicorn; it mounts only the public `media` directory. Contact attachments use `/app/private_uploads`, outside the public media mount. Compose currently supplies local development settings and is not a production deployment configuration.
