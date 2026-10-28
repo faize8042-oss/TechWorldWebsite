@@ -13,8 +13,19 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-28, branch `feature/codeventra-ui`, at commit `89a00a167b8a06ac33740f7fc0a42ae6c64de68b` (`docs: add validation scope and date`).
+- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `19e20c1932bf966ea29bac73a0a2bf597752c17a` (`docs: record current Git baseline`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
+
+## Production Compose findings
+
+- `docker compose -f deploy/compose.production.yaml config --quiet` **passed** with harmless placeholder values supplied from temporary files outside the repository. This validates Compose rendering only; no production service, network, or volume was started or created. The template is not deployable as supplied because its image, host/certificate, secret, and connection values still require real reviewed deployment inputs.
+- The four services are `db`, `redis`, `web`, and `nginx`. Web waits for healthy PostgreSQL and Redis; Nginx has only a start-order dependency on web, with no web readiness health check. PostgreSQL and Redis have health checks; web and Nginx do not.
+- Only Nginx publishes host ports 80 and 443. Gunicorn port 8000 is exposed within Compose networks and PostgreSQL/Redis publish no ports. The `data` network is internal; the `proxy` bridge uses a fixed subnet and Nginx address. Web is attached to both networks, so database-network peers can reach Gunicorn over `data`; Compose does not apply directional peer filtering.
+- PostgreSQL, private uploads, and public media use persistent named volumes. Nginx receives only the public-media volume, read-only; private uploads are not mounted into Nginx. Redis is deliberately non-persistent, memory-limited to 128 MB, and configured with `allkeys-lru`, so cached/rate-limit state is disposable.
+- Services use `unless-stopped`, `no-new-privileges`, and read-only root filesystems for web/Nginx. There are no privileged containers, added Linux capabilities, Docker socket mounts, or hardcoded credentials. Web’s filesystem and volume ownership still need a disposable deployment rehearsal. The template does not specify CPU/memory resource limits.
+- The application image must be supplied as an immutable digest. PostgreSQL, Redis, and Nginx use version tags, not digests. The PostgreSQL health check uses its configured role, and Redis checks authenticated `PING`; Redis password interpolation also places the password in the server process arguments. Keep Compose rendering output private because interpolated values may be sensitive.
+- The template has no automatic migration command or migration service, which avoids uncontrolled startup migrations. The web database URL uses `POSTGRES_USER`, which the official PostgreSQL image initializes as a superuser; create and configure a separate least-privilege runtime role before deployment. Compose CLI interpolation inputs must be supplied separately from web’s service-level `env_file`.
+- Static DNS resolution for the Nginx upstream may become stale after web-container replacement. HTTPS enablement in Compose also conflicts with Django’s currently unset trusted-proxy header and can cause redirect loops. These are deployment blockers requiring approved template/application changes before activation.
 
 ## Architecture review
 
@@ -65,4 +76,4 @@ No `.env` contents were printed, copied, modified, or mounted. **Correction to e
 
 ## Remaining production gates
 
-Deployment remains blocked by the HTTPS proxy-trust mismatch, PostgreSQL application superuser credentials, Host-reflecting redirect, private-storage URL behavior, unresolved internal Gunicorn peer boundary, and placeholder host/certificate values. Domain/VPS, DNS, production secrets, image digests, SMTP delivery, backup encryption/storage/key recovery, restore rehearsal, retention, monitoring, and explicit deployment approval also remain outstanding. At report preparation, the latest prior commit was `ecf0e34a1f8e9a2758fb8b0c1fba1da5ca3b643f`; an uncommitted `contact/tests.py` regression test remains pending the storage fix. Do not deploy, enable indexing, or activate production templates on the basis of this local review.
+Deployment remains blocked by the HTTPS proxy-trust mismatch, PostgreSQL application superuser credentials, Host-reflecting redirect, private-storage URL behavior, unresolved internal Gunicorn peer boundary, and placeholder host/certificate values. Domain/VPS, DNS, production secrets, image digests, SMTP delivery, backup encryption/storage/key recovery, restore rehearsal, retention, monitoring, and explicit deployment approval also remain outstanding. During initial report preparation, the latest prior commit was `ecf0e34a1f8e9a2758fb8b0c1fba1da5ca3b643f`; an uncommitted `contact/tests.py` regression test remains pending the storage fix. Do not deploy, enable indexing, or activate production templates on the basis of this local review.
