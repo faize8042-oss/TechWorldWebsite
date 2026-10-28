@@ -4,7 +4,7 @@
 
 **Verification date:** 2026-10-28 (local validation recorded below).
 
-**Status labels:** `[VERIFIED]` successful check supported by evidence; `[VERIFIED WITH WARNINGS]` completed with disclosed warnings; `[PROPOSED]` a design or target not approved or implemented; `[FAIL]` check failed; `[BLOCKED]` cannot proceed until a defect or prerequisite is resolved; `[NOT RUN]` intentionally not performed; `[UNVERIFIED]` not established by available evidence; `[NOT IN PLACE]` absent; `[UNCOMMITTED]` present only as an unstaged/uncommitted change; `[PENDING APPROVAL]` awaits explicit approval.
+**Status labels:** `[VERIFIED]` successful check supported by evidence; `[VERIFIED WITH WARNINGS]` completed with disclosed warnings; `[PROPOSED]` a design or target not approved or implemented; `[DEFERRED]` intentionally left to a later phase; `[FAIL]` check failed; `[BLOCKED]` cannot proceed until a defect or prerequisite is resolved; `[NOT RUN]` intentionally not performed; `[UNVERIFIED]` not established by available evidence; `[NOT IN PLACE]` absent; `[UNCOMMITTED]` present only as an unstaged/uncommitted change; `[PENDING APPROVAL]` awaits explicit approval.
 
 ## Initial repository state
 
@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `067a2a2f4f09cbe9744fcce6ed85a3a5d6a3b624` (`docs: define deployment approval gates`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `e05383fa05dd9e62544a5dc031dd1e2c89a93e38` (`docs: label proposed deployment targets`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -147,6 +147,7 @@ Several blockers require application or deployment-template changes. They are do
 ## Domain and hosting prerequisites
 
 - [NOT IN PLACE] `codeventralabs.com` has not been purchased; no VPS has been purchased or provisioned; DNS, public certificates, production secrets, and live deployment do not exist. Nothing in this report authorizes purchase, account creation, DNS changes, or deployment.
+- [DEFERRED] Domain/VPS purchase, DNS configuration, real certificate issuance, production deployment, database migration/backup/restore, and SEO activation are outside Phase C5 and require their applicable approval gates below.
 - Before selecting a domain, confirm registrar pricing and renewal, ownership/control, account recovery/MFA, and the canonical hostnames. Once approved and registered, plan and verify A/AAAA records and propagation from external resolvers before requesting a certificate. Do not configure a real hostname or DNS in this phase.
 - [PROPOSED] Hosting preference remains Hetzner Cloud, subject to account eligibility, region availability, capacity, and checkout. The existing cost plan was checked on 2026-10-28 and is provisional: CX23/CX33 were marked unavailable at that check. The listed CX33 server, IPv4, and provider-backup subtotal was about $12.59/month before VAT, leaving about $7.41 under a $20 ceiling for independent encrypted backups, domain, email, tax, and monitoring. The complete total has not been verified within the $10–20 budget. Recheck prices, availability, taxes, storage, and billing before any purchase decision; DigitalOcean's compared option was above budget before domain and external-backup costs.
 - Before provisioning, approve the provider, region, plan, total monthly cost, storage/capacity headroom, access owners, and recovery path. Select an independent encrypted backup destination and confirm its access and cost. A single VPS is one failure domain and does not provide high availability.
