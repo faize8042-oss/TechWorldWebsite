@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `4459633f1b39173769c180f5b4b4f48b2112cdda` (`docs: mark out-of-phase tasks deferred`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `fc0ba83ee18afbcfcb94931d8aee6bd0e803bca2` (`docs: scope verified status claims`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -103,6 +103,8 @@
 ## Verified automated checks
 
 The Compose, Nginx, Django, focused-test, local HTTP, and service-status checks below were run on 2026-10-28. `git diff --check` passed during this report update on 2026-10-29. This documentation-only update did not rerun application checks. Placeholder-only Compose rendering is a syntax/configuration check, not evidence that images, credentials, networks, or runtime behavior are production-ready.
+
+A successful syntax check confirms only that the supplied configuration parses in that validation environment. It does **not** establish production runtime security, network isolation, secret protection, TLS correctness, service readiness, or safe behavior under real traffic.
 
 - [VERIFIED] Production Compose config validation with `docker compose config --quiet`, explicit placeholder-only environment files under system temp, and no services started. No real credentials were used.
 - [VERIFIED] Production Nginx syntax validation using local image digest `sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5` on Docker's `none` network. A synthetic self-signed certificate was generated inside a disposable offline helper container and removed after `nginx -t`. Syntax-only; it does not validate the production-pinned `nginx:1.28.1-alpine`, real certificate, TLS, DNS, or proxy behavior.
