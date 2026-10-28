@@ -5,6 +5,13 @@ upstream django_app {
     keepalive 16;
 }
 
+# Reject unknown HTTP hosts instead of reflecting them into redirects.
+server {
+    listen 80 default_server;
+    server_name _;
+    return 444;
+}
+
 # Bootstrap with an HTTP-only configuration while verifying reachability and
 # obtaining a certificate. Enable this redirect only after TLS is operational.
 server {
@@ -14,8 +21,16 @@ server {
     client_max_body_size 6m;
 
     location / {
-        return 301 https://$host$request_uri;
+        return 301 https://codeventralabs.com$request_uri;
     }
+}
+
+# Reject unrecognized TLS names and hosts; this server has no application route.
+server {
+    listen 443 ssl default_server;
+    server_name _;
+    ssl_reject_handshake on;
+    return 444;
 }
 
 server {
