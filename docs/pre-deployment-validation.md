@@ -4,7 +4,7 @@
 
 ## Authorized file scope
 
-- Authorized documentation files: `docs/pre-deployment-validation.md`, `docs/deployment-architecture.md`, `docs/launch-checklist.md`, and `docs/production-readiness.md`.
+- Authorized files: `deploy/compose.production.yaml`, `docs/pre-deployment-validation.md`, `docs/deployment-architecture.md`, `docs/launch-checklist.md`, and `docs/production-readiness.md`.
 - `.env.example` may be changed only if necessary for safe documentation. `.env` is never authorized: do not read, print, modify, copy, mount, or expose it, and do not inspect real secret values.
 - Do not modify other files under this scope. The existing uncommitted `contact/tests.py` change is outside this file list; it remains untouched and unstaged.
 
@@ -21,7 +21,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `8aee2118417a610e74ebe1469b8eed10dc7a83bd` (`docs: mark hosting account status unverified`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `4b2915d74c1f898befb008b9a6b24f3307e0abc0` (`docs: record authorized Phase C5 file scope`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -32,13 +32,13 @@
 - PostgreSQL, private uploads, and public media use persistent named volumes. Nginx receives only the public-media volume, read-only; private uploads are not mounted into Nginx. Redis is deliberately non-persistent, memory-limited to 128 MB, and configured with `allkeys-lru`, so cached/rate-limit state is disposable.
 - Services use `unless-stopped`, `no-new-privileges`, and read-only root filesystems for web/Nginx. There are no privileged containers, added Linux capabilities, Docker socket mounts, or hardcoded credentials. Web’s filesystem and volume ownership still need a disposable deployment rehearsal. The template does not specify CPU/memory resource limits.
 - The application image must be supplied as an immutable digest. PostgreSQL, Redis, and Nginx use version tags, not digests. The PostgreSQL health check uses its configured role, and Redis checks authenticated `PING`; Redis password interpolation also places the password in the server process arguments. Keep Compose rendering output private because interpolated values may be sensitive.
-- The template has no automatic migration command or migration service, which avoids uncontrolled startup migrations. The web database URL uses `POSTGRES_USER`, which the official PostgreSQL image initializes as a superuser; create and configure a separate least-privilege runtime role before deployment. Compose CLI interpolation inputs must be supplied separately from web’s service-level `env_file`.
+- The template has no automatic migration command or migration service, which avoids uncontrolled startup migrations. PostgreSQL's `POSTGRES_USER` is the image initialization role; the independently supplied `DATABASE_URL` role is unknown because its protected value was not inspected. Require and provision a separate least-privilege runtime role before deployment. Compose CLI interpolation inputs must be supplied separately from web’s service-level `env_file`.
 - Static DNS resolution for the Nginx upstream may become stale after web-container replacement. HTTPS enablement in Compose also conflicts with Django’s currently unset trusted-proxy header and can cause redirect loops. These are deployment blockers requiring approved template/application changes before activation.
 
 ## PostgreSQL and Redis isolation findings
 
 - PostgreSQL 17.6 and Redis 7.4.2 are on the Compose `data` network (`internal: true`) with no published host ports. This limits external routing; it does not isolate those services from each other or from web, which shares the network. Local PostgreSQL/Redis containers were not modified or restarted.
-- PostgreSQL stores data in the persistent `postgres_data` volume. Its `pg_isready` health check and web's healthy dependency gate startup on server availability, but do not prove the application credentials or full Django queries work. The Compose bootstrap role is also placed in `DATABASE_URL`; because the official PostgreSQL image initializes `POSTGRES_USER` as a superuser, production must use a separate least-privilege runtime role and preserve role/grant recreation in recovery procedures.
+- PostgreSQL stores data in the persistent `postgres_data` volume. Its `pg_isready` health check and web's healthy dependency gate startup on server availability, but do not prove the application credentials or full Django queries work. The image initializes `POSTGRES_USER` as a superuser; `DATABASE_URL` is a separate required Compose input, and its role was not inspected. Require a distinct least-privilege runtime role and preserve role/grant recreation in recovery procedures.
 - The template has no migration startup command or migration service. Migrations therefore remain a controlled operator action, with reviewed compatibility and backup state required before a release. PostgreSQL uses a version tag rather than an immutable digest; digest selection and update policy remain deployment tasks.
 - Redis requires a password, has an authenticated `PING` health check, a 128 MB memory cap, `allkeys-lru`, and both RDB/AOF persistence disabled. Authentication uses the default Redis user; there is no dedicated ACL user or per-service command isolation. This matches disposable cache/rate-limit data only; eviction can discard rate-limit state, so Redis must not become the sole store for sessions, jobs, or other durable state without revisiting the policy. The password is present in the container environment and expanded into the server process arguments.
 - Django configures its cache from `REDIS_URL`; production Compose injects an authenticated URL. That confirms the intended connection configuration statically, not runtime connectivity or ACL isolation. The backup plan covers PostgreSQL logical dumps and paired private-upload recovery, not Redis, which is intentionally disposable.
@@ -79,7 +79,7 @@
 - The app image is required as an immutable digest. PostgreSQL, Redis, and Nginx use pinned version tags but not digests; pin reviewed digests before deployment and define an image update process.
 - The app has a read-only root filesystem, a non-root image user, and persistent volumes for private uploads/public media. Verify volume ownership with a disposable rehearsal. Nginx mounts only public media read-only; private attachments are not mounted into Nginx.
 - Redis is authenticated, memory-bounded, and non-persistent with `allkeys-lru`. It is appropriate only while cache and rate-limit state are disposable; verify eviction behavior before launch.
-- The web service uses `POSTGRES_USER` in `DATABASE_URL`. The PostgreSQL official image creates that role as a superuser; use a separate least-privilege runtime role before deployment.
+- `DATABASE_URL` is a separate required interpolation input; this template does not reveal which database role it names. `POSTGRES_USER` initializes the PostgreSQL image's superuser role. Use and verify a separate least-privilege runtime role before deployment; do not infer the protected URL's contents.
 - Web also joins the internal data network, so PostgreSQL and Redis peers can reach Gunicorn. No host port is published, but Compose does not provide directional peer filtering.
 - The HTTP redirect reflects `$host`, allowing an unknown host to influence its destination. The Nginx upstream uses static DNS resolution and may need reload after web-container replacement.
 - Redis expands its password into the `redis-server --requirepass` process argument as well as receiving it through the environment.
@@ -143,7 +143,7 @@ No production deployment, real service connection, certificate validation, data 
 Do not expose the proposed production stack publicly until these are resolved, reviewed, and validated:
 
 - [BLOCKED] **HTTPS/proxy trust:** Compose enables `ENABLE_HTTPS=True`, but Django leaves `SECURE_PROXY_SSL_HEADER=None`; TLS-terminated requests can loop on redirects. The web container also shares the internal data network with PostgreSQL and Redis peers, so a proxy header cannot safely be trusted until direct Gunicorn access is restricted and that boundary is proven.
-- [BLOCKED] **Database privilege:** the application database URL uses the PostgreSQL initialization role, which is a superuser in a fresh official-image database. Provision a separate least-privilege runtime role and keep migration/backup privileges separate.
+- [BLOCKED] **Database privilege:** the role named by protected `DATABASE_URL` was not inspected and is not guaranteed by the template to differ from PostgreSQL's initialization superuser. Require evidence that the runtime role is separate and least-privilege; keep migration/backup privileges separate.
 - [BLOCKED] **Host redirect:** the HTTP Nginx redirect reflects `$host`; unknown Host values can influence the redirect destination. Use a fixed, confirmed canonical host or an explicit rejecting default server.
 - [BLOCKED] **Private attachment URL behavior:** storage generates a `/media/` URL for a synthetic private path. The separate volume prevents Nginx from directly reading the private volume, but the failed regression test leaves URL generation unresolved. Obtain approval for the storage implementation change, then pass the regression test before launch.
 - [BLOCKED] **Secrets and cache access:** Redis password is exposed through container environment and process arguments, and Redis uses its default ACL user. Reduce secret exposure and review Redis access policy before handling production credentials. Never publish rendered Compose output.

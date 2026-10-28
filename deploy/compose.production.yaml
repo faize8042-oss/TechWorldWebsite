@@ -1,6 +1,8 @@
 # Proposed production topology. This file is intentionally separate from compose.yaml.
 # Supply APP_IMAGE as an immutable registry digest and PRODUCTION_ENV_FILE as a
 # protected host-side env file before any operator considers activation.
+# DATABASE_URL is supplied independently and must use a dedicated least-privilege
+# runtime role, not the PostgreSQL initialization role in POSTGRES_USER.
 services:
   db:
     image: postgres:17.6-alpine
