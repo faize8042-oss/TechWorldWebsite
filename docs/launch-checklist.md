@@ -16,12 +16,15 @@ See the [Phase C5 pre-deployment validation](pre-deployment-validation.md) for t
 
 ## HTTPS and Django
 
-- [ ] Verify HTTP reachability, obtain a valid certificate, and rehearse renewal using a selected ACME/DNS challenge method.
-- [ ] Replace Nginx hostname/certificate placeholders and validate configuration on the target host before reload.
-- [ ] Confirm Nginx overwrites all forwarded headers and Gunicorn is not directly reachable; only then configure trusted proxy protocol in Django.
-- [ ] Set production environment with `DEPLOYMENT_MODE=production`, `DEBUG=False`, strong `SECRET_KEY`, exact `ALLOWED_HOSTS`, and HTTPS `CSRF_TRUSTED_ORIGINS`.
-- [ ] Configure PostgreSQL, Redis authentication, SMTP secrets, and analytics secret using protected configuration; never commit or print secret values.
-- [ ] Verify TLS and redirect behavior, secure cookies, security headers, and Django `check --deploy` findings. Enable HSTS gradually after stable HTTPS; leave `includeSubDomains` and `preload` disabled until separately reviewed.
+- [ ] Confirm domain ownership, canonical hostnames, DNS, host firewall, and non-conflicting Docker networks.
+- [ ] Confirm Gunicorn has no published host port and identify/restrict every network peer that can reach web, including peers on its data network.
+- [ ] Obtain the certificate using a selected DNS challenge or a separate reviewed HTTP-only bootstrap config; the production Nginx template requires certificates and redirects HTTP, so it cannot bootstrap TLS as supplied.
+- [ ] Configure/rehearse certificate renewal, replace hostname/certificate placeholders, and reject unknown redirect hosts or use a fixed canonical host.
+- [ ] Validate final Nginx configuration with the exact pinned image and confirm it overwrites forwarded protocol and client-IP headers.
+- [ ] Configure protected production values with `DEPLOYMENT_MODE=production`, `DEBUG=False`, a strong `SECRET_KEY`, exact `ALLOWED_HOSTS`, matching HTTPS `CSRF_TRUSTED_ORIGINS`, and consistent database/Redis URLs. Never commit or print secret values.
+- [ ] After proxy behavior and Gunicorn isolation are verified, approve/configure Django `SECURE_PROXY_SSL_HEADER`; test that Django recognizes HTTPS while `ENABLE_HTTPS` is still false.
+- [ ] Only after the proxy test passes, set `ENABLE_HTTPS=True`; verify HTTPS, redirects, secure cookies, CSRF, unknown-host rejection, and Django `check --deploy`. The current production Compose template hard-codes this setting to true, so do not start it before these gates pass.
+- [ ] Enable HSTS gradually only after stable HTTPS; keep `includeSubDomains` and `preload` disabled until separately reviewed.
 - [ ] Confirm static assets load through WhiteNoise and public media is intentionally served. Prove private contact attachments cannot be fetched through a public URL and authorized admin access still works.
 - [ ] Verify SMTP TLS, sender authorization, successful delivery to a controlled mailbox, and failure handling without real customer data.
 

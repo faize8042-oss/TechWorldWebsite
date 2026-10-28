@@ -50,18 +50,21 @@ Redis is a bounded, authenticated, no-persistence cache (`allkeys-lru`). Confirm
 
 Certificate file paths in `deploy/nginx/production.conf.example` are placeholders. The template is not loadable as-is and must not be activated before a valid certificate and real hostnames exist. Start with a separate reviewed HTTP-only bootstrap configuration to verify reachability and obtain the certificate; then install the TLS server and redirect configuration. Select and test an ACME challenge method and renewal automation; do not assume the example provisions certificates.
 
-Safe order:
+There is also a confirmed HTTPS activation mismatch: production Compose sets `ENABLE_HTTPS=True`, which enables Django SSL redirects, while current Django settings leave `SECURE_PROXY_SSL_HEADER=None`. Since Nginx terminates TLS and forwards HTTP to Gunicorn, do not activate this Compose template until the trusted-proxy setting has been approved, implemented, and verified. The HTTP redirect also uses the request `$host`; reject unknown hosts or use a fixed canonical redirect target before enabling it.
 
-1. Confirm control of the chosen domain and decide canonical hostnames.
-2. Provision the approved server and verify account eligibility, region, capacity, and costs.
-3. Configure DNS records and verify propagation and ownership.
-4. Verify inbound HTTP reachability and firewall behavior.
-5. Obtain a valid certificate through the selected ACME/DNS challenge procedure; configure and rehearse renewal.
-6. Validate Nginx TLS, host forwarding, and that `X-Forwarded-Proto` is overwritten from `$scheme`.
-7. Confirm Gunicorn cannot be reached directly from the public interface.
-8. Only then configure Django `SECURE_PROXY_SSL_HEADER` for the verified proxy header.
-9. Enable `ENABLE_HTTPS=True`, secure cookies, and SSL redirects after checking the real hosts and CSRF origins.
-10. Consider HSTS only after stable HTTPS operation. Start with an approved short duration; keep subdomain and preload flags off until every subdomain and policy requirement has been reviewed. Never enable preload automatically.
+Exact safe order:
+
+1. Confirm domain control, canonical hostnames, approved hosting, DNS ownership, and the target host's firewall and network routes. Check that the production Docker subnet does not conflict with host or existing Docker networks.
+2. Establish the Gunicorn trust boundary. Confirm there is no host-published Gunicorn port and identify every container/network peer that can reach web; the current web service also joins the data network. Restrict or explicitly trust those peers before Django trusts forwarded protocol headers.
+3. Obtain a valid certificate using a selected DNS challenge, or use a separate reviewed HTTP-only bootstrap configuration. The production Nginx template is not a bootstrap file: it requires certificate files and redirects HTTP to HTTPS.
+4. Configure certificate renewal and rehearse it. Replace Nginx host and certificate placeholders, and confirm the certificate covers every configured hostname.
+5. Reject unknown HTTP hosts or change the redirect to a fixed confirmed canonical hostname. Validate the final Nginx configuration with the exact pinned image and certificate paths.
+6. Prepare protected production values and an approved immutable application image. Confirm `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, database credentials/URL, Redis password/URL, and SMTP settings agree. Validate Compose interpolation without printing or storing resolved secrets.
+7. Verify Nginx overwrites `X-Forwarded-Proto` from `$scheme` and client-IP headers from the connection, then verify untrusted clients cannot reach Gunicorn through any host or container path.
+8. After steps 2 and 7 pass, approve and configure Django `SECURE_PROXY_SSL_HEADER` for the exact overwritten header. Test through the proxy that Django recognizes HTTPS while `ENABLE_HTTPS=False`; the current settings do not yet provide this trust.
+9. Only after the HTTPS proxy test passes, set `ENABLE_HTTPS=True`. In the current production Compose template this value is hard-coded, so all preceding gates and an appropriate staging/override validation must be complete before starting it. Then verify HTTPS, HTTP redirect, secure cookies, CSRF behavior, and unknown-host rejection.
+10. After stable HTTPS operation, consider HSTS with an approved short duration. Keep subdomain and preload flags off until every subdomain and policy requirement has been reviewed. Never enable preload automatically.
+11. Keep SEO indexing disabled until the separate domain, content, and launch approval gates are complete.
 
 The Nginx template overwrites `Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`, and `X-Forwarded-Port`. Body size is limited to 6 MiB, matching the existing application upload cap plus multipart overhead. Nginx denies dotfiles and environment/Git/private-upload paths and disables directory listing. Public media is intentionally served from its separate read-only volume. No private attachments or `.env` path is mounted there.
 
@@ -90,7 +93,7 @@ The existing Phase C3 `DEPLOYMENT_MODE` controls production-only, network-free D
 | `SEO_SITE_URL` | Set only to the verified HTTPS origin after domain control and public routing work. |
 | `SEO_INDEXING_ENABLED` | Keep false until separate launch approval. |
 
-Current settings already leave proxy trust disabled, redirect/cookies disabled until explicitly enabled, HSTS at zero by default, and SEO indexing false. No settings change is required for this design phase. Run production checks with protected values in a later deployment review; do not print resolved secrets or activate production mode locally.
+No settings change was made during this design phase. Local defaults still leave proxy trust and HTTPS redirects/cookies disabled, HSTS at zero, and SEO indexing off. Before production activation, the HTTPS proxy-trust mismatch described above requires an approved settings change and validation with protected deployment values; do not print resolved secrets or enable production mode locally.
 
 ## Database, backup, and recovery
 

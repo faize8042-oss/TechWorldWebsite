@@ -45,7 +45,19 @@ The production checks intentionally fail until production values are supplied. D
 
 ## HTTPS and reverse proxy prerequisites
 
-Configure TLS termination and HTTP-to-HTTPS behavior in the deployment proxy during the deployment phase. The proxy must set the upstream `Host`, overwrite `X-Forwarded-Proto` and client-IP headers from the actual connection, and prevent direct untrusted access to Gunicorn. Only then consider setting Django's `SECURE_PROXY_SSL_HEADER`; never accept client-supplied forwarded headers as proof of TLS. Confirm allowed hosts and CSRF origins against the actual domain before enabling redirects or secure cookies. No certificate, DNS, or proxy changes are included in this phase.
+Use this order for production HTTPS; do not skip gates:
+
+1. Confirm domain ownership, canonical hostnames, DNS, host firewall, and non-conflicting Docker networks.
+2. Verify the Gunicorn trust boundary. Gunicorn has no published host port in the template, but web also shares the data network with PostgreSQL and Redis; identify/restrict every peer that can reach it before trusting forwarded protocol headers.
+3. Obtain a valid certificate through the selected DNS challenge or a separately reviewed HTTP-only bootstrap configuration. The production Nginx template itself requires certificate files and redirects HTTP to HTTPS, so it cannot bootstrap TLS as supplied.
+4. Configure and rehearse certificate renewal, replace hostname/certificate placeholders, and configure unknown-host rejection or a fixed canonical redirect target.
+5. Validate the finalized Nginx config with the exact pinned image and real deployment paths. Confirm Nginx overwrites `X-Forwarded-Proto` and client-IP headers from the connection.
+6. Confirm `ALLOWED_HOSTS` and HTTPS `CSRF_TRUSTED_ORIGINS` exactly match verified hostnames; confirm service URLs and credentials are consistent without printing secrets.
+7. After the proxy behavior and access boundary are verified, approve and configure Django `SECURE_PROXY_SSL_HEADER` for the exact Nginx header. Test through the proxy that Django recognizes HTTPS while SSL redirect is still disabled.
+8. Only after that test passes, enable `ENABLE_HTTPS=True` and verify HTTPS requests, HTTP-to-HTTPS redirects, secure cookies, CSRF behavior, and unknown-host rejection. The current production Compose template hard-codes this setting to `True`, so do not start it until all earlier gates pass or a reviewed staging override has been used.
+9. Add HSTS gradually after stable HTTPS. Keep `includeSubDomains` and `preload` off until every subdomain and policy requirement has been separately reviewed.
+
+Never trust client-supplied forwarded headers as proof of TLS. Django currently leaves `SECURE_PROXY_SSL_HEADER=None`; production Compose currently forces `ENABLE_HTTPS=True`. This mismatch can cause redirect loops and must be resolved before activation. No certificate, DNS, or proxy changes are included in this preparation phase.
 
 ## PostgreSQL backup and restore rehearsal
 
