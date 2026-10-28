@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `0b9c6d650bccbd3c1ce90bc510d7b275a21d32cc` (`docs: detail production Compose findings`).
+- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `36c7f49d240b82dae418c01db9c3618c8e747b6f` (`docs: record production Nginx findings`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -36,6 +36,14 @@
 - Isolated `nginx -t` **passed** against local image digest `sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5` using a disposable synthetic certificate on Docker's `none` network. This is syntax-only; the production-pinned Nginx image, live certificate, TLS negotiation, Docker DNS refresh, routing, and response-header behavior were not runtime-tested. The active local Nginx was not restarted or modified.
 - Django must not trust forwarded HTTPS until direct untrusted access to Gunicorn is prevented and the intended Nginx path is verified. Set Django proxy trust only after that boundary is established and the proxy is confirmed to overwrite the protocol header. Keep HSTS disabled during bootstrap; enable it only after HTTPS and all relevant hostnames are verified, and leave preload disabled unless separately approved.
 
+## HTTPS and proxy security findings
+
+- Django currently has `SECURE_PROXY_SSL_HEADER = None`; `USE_X_FORWARDED_HOST` is not enabled. Production Compose sets `ENABLE_HTTPS=True`, which activates Django SSL redirects and secure session/CSRF cookies, while HSTS remains zero unless configured otherwise. Because Django does not recognize Nginx's `X-Forwarded-Proto: https` yet, HTTPS requests can be redirected repeatedly. Keep local settings unchanged; this is a production activation blocker.
+- Nginx assigns `X-Forwarded-Proto` from its own `$scheme` and replaces forwarded host/IP headers, so it does not retain client-supplied values along its proxy path. However, the Compose web service is also attached to the internal `data` network; PostgreSQL and Redis peers share that network and can reach Gunicorn directly. The absence of a published Gunicorn port does not prove Nginx is its only trusted caller. Do not configure Django to trust forwarded HTTPS until the topology prevents untrusted direct access and that boundary is verified.
+- Before activation, confirm domain ownership and DNS; serve a separate HTTP-only bootstrap config; obtain the real certificate; validate and activate the TLS server; test TLS and proxy behavior; then restrict Gunicorn reachability to the intended proxy path. Only after that should approved Django production settings trust `HTTP_X_FORWARDED_PROTO=https` and enable `ENABLE_HTTPS`, redirects, and secure cookies. Verify allowed hosts and HTTPS CSRF origins against the confirmed hostnames, and confirm redirects/cookies through the real proxy.
+- Enable HSTS only after HTTPS works reliably for every hostname covered by the policy and rollback implications are understood. Keep `SECURE_HSTS_INCLUDE_SUBDOMAINS` and `SECURE_HSTS_PRELOAD` off until their broader scope is explicitly reviewed; preload remains disabled in this preparation. No HSTS, HTTPS redirect, local proxy trust, or production Django setting was activated during this phase.
+- Production HTTPS, certificate validity/renewal, redirect handling, host validation through the live proxy, and spoofed-header behavior were not runtime-tested because no domain, real certificate, or production network exists. The synthetic certificate was used only for isolated Nginx syntax validation.
+
 ## Architecture review
 
 - Production topology is isolated in `deploy/compose.production.yaml`; local `compose.yaml` is development configuration and remains untouched.
@@ -55,7 +63,7 @@
 
 - Production-only checks require a long secret, `DEBUG=False`, confirmed hosts, HTTPS CSRF origins, PostgreSQL, SMTP credentials, and explicit HTTPS enablement. They do not connect to those services.
 - Redirects and secure cookies require `ENABLE_HTTPS=True`; HSTS defaults to zero. `SECURE_PROXY_SSL_HEADER` is unset while production Compose forces `ENABLE_HTTPS=True`. Behind TLS-terminating Nginx, this can cause redirect loops. Resolve the proxy trust and network boundary before activation. Active settings were not changed.
-- Nginx overwrites `Host`, forwarded protocol, and client IP headers. The configured static proxy address matches Django's trusted proxy IP. Validate the address does not conflict with the target host networks.
+- Compose assigns Nginx the static proxy-network address `172.20.0.10`, and Nginx overwrites `Host`, forwarded protocol, and client IP headers. Django currently has no trusted proxy header configured; `SECURE_PROXY_SSL_HEADER` is unset, and it is not an IP allowlist. Check the subnet against host networks before deployment.
 - TLS certificate paths and hostnames are placeholders. The template is not deployable as supplied. Obtain and validate a certificate, review renewal, then validate Nginx before activation. Keep public SEO indexing disabled.
 
 ## Data protection and recovery review
