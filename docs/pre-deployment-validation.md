@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `cd3d4b28d883af1d320532716cc5db47ad43df8e` (`docs: clarify syntax validation limits`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `cf2fdc0315c2a2093f006069d5b5c23f3c04cf44` (`docs: prohibit hosting service checkout`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -158,7 +158,7 @@ Several blockers require application or deployment-template changes. They are do
 
 ## Domain and hosting restrictions
 
-- [DEFERRED] Do not register or purchase a domain, create a hosting account, check out or purchase hosting services, purchase/provision a VPS, start provider trials, or add paid services in this phase.
+- [DEFERRED] Do not register or purchase a domain, create a hosting account, check out or purchase hosting services, create a Hetzner server or any other VPS, start provider trials, or add paid services in this phase.
 - [DEFERRED] Do not configure or change public DNS, publish an IP address, request or install a production certificate, expose the site publicly, or deploy production services.
 - [DEFERRED] Do not create production credentials or place them in the repository, local `.env`, command history, rendered Compose output, or logs. The user's `.env` access restriction remains in force.
 - [DEFERRED] Do not enable public indexing, set a real production SEO origin, or submit sitemaps. Keep SEO indexing disabled until its separate approval gate is satisfied.
