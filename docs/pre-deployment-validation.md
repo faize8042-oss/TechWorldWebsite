@@ -1,6 +1,8 @@
 # Phase C5 pre-deployment validation
 
-**Scope:** local review of the Phase C4 production proposal. This is not a deployment or an assertion that production is ready. The domain, VPS, DNS, production credentials, SMTP, certificates, backups, and live routing do not exist or have not been verified.
+**Scope:** local review of the Phase C4 production proposal, including production Compose and Nginx templates, Django production checks, proxy trust, data isolation, private attachment handling, backup guidance, and local regression/HTTP checks. No production deployment, service start, database migration, backup, restore, domain/DNS setup, or SEO activation was performed. This is not an assertion that production is ready.
+
+**Verification date:** 2026-10-28 (local validation recorded below).
 
 ## Initial repository state
 
