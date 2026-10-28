@@ -4,6 +4,8 @@ This is a preparation guide. The application has not been deployed, the planned 
 
 See the proposed [deployment architecture](deployment-architecture.md), [hosting cost plan](hosting-cost-plan.md), and [launch checklist](launch-checklist.md) for the isolated production design. These are planning artifacts only; no production behavior has been verified.
 
+The Phase C5 local audit and its current verification record are in [pre-deployment validation](pre-deployment-validation.md). A successful local syntax or settings check does not verify a live deployment.
+
 ## Current architecture
 
 Docker Compose runs Django 5.2 under Gunicorn, PostgreSQL 17, Redis 7, and Nginx. WhiteNoise serves collected static assets. Nginx currently listens on HTTP and proxies to Gunicorn; it mounts only the public `media` directory. Contact attachments use `/app/private_uploads`, outside the public media mount. Compose currently supplies local development settings and is not a production deployment configuration.
@@ -50,7 +52,10 @@ Configure TLS termination and HTTP-to-HTTPS behavior in the deployment proxy dur
 Use `pg_dump` in custom format over a protected connection, writing directly to encrypted storage outside the repository and application host. Avoid shell history, process listings, or logs containing passwords; prefer a protected `PGPASSFILE`/secret injection mechanism. Example after substituting secret-managed connection parameters:
 
 ```sh
-pg_dump --format=custom --no-owner --no-acl --file=/secure-backup/codeventra-YYYYMMDD.dump --dbname="$DATABASE_URL"
+# Set PGPASSFILE to a protected, mode-0600 file with the database password.
+# Supply non-secret connection fields as a libpq keyword string; do not put
+# the password in a URI or command argument.
+pg_dump --format=custom --no-owner --no-acl --file=/secure-backup/codeventra-YYYYMMDD.dump --dbname="host=DB_HOST port=5432 dbname=DB_NAME user=BACKUP_USER sslmode=verify-full"
 pg_restore --list /secure-backup/codeventra-YYYYMMDD.dump
 ```
 

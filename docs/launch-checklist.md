@@ -2,6 +2,8 @@
 
 This checklist describes future approval gates. It does not indicate that any launch item has been completed.
 
+See the [Phase C5 pre-deployment validation](pre-deployment-validation.md) for the local architecture audit and verification record.
+
 ## Ownership and infrastructure
 
 - [ ] Confirm registration and control of the selected domain and canonical hostname(s).
