@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `d8943a991c90a34faf0709a51b72d69d969d26aa` (`docs: audit backup and restore readiness`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `ae9e95ffacfec647a12b3426ddae49fbeaa4f406` (`docs: clarify verified validation results`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -111,6 +111,22 @@ The Compose, Nginx, Django, focused-test, local HTTP, and service-status checks 
 - Local HTTP GET checks: **passed** for `/`, `/about/`, `/services/`, `/projects/`, `/contact/`, `/privacy/`, `/terms/`, `/sitemap.xml`, `/robots.txt`, and `/health/` (all 200, expected HTML/XML/plain-text content types). Public HTML pages contained `noindex, nofollow`. Health returned only `ok` as `text/plain` and `Cache-Control: no-store`.
 - Existing Compose services: **db, web, nginx, and redis were up**; PostgreSQL and Redis reported healthy. No service was recreated. No production container, network, or volume was started or created. Docker build was not run.
 - Automated tests added: 10 committed configuration tests passed in the focused run; one additional private-storage test remains uncommitted and currently fails pending the application-code fix. The baseline full-suite result remains 49; do not report 59 as a verified full-suite pass.
+
+## Unverified assumptions
+
+The following items have not been established by local template parsing or the isolated checks above; treat them as open deployment requirements, not facts:
+
+- Ownership and control of `codeventralabs.com`, DNS records/propagation, VPS availability and eligibility, actual checkout cost within the $10–20 budget, region suitability, and production certificate issuance/renewal.
+- Availability, architecture compatibility, vulnerability status, and immutable digests for the proposed application, PostgreSQL, Redis, and target Nginx images. Compose rendering does not pull or start images; isolated Nginx syntax testing used a different local image digest from the template's `nginx:1.28.1-alpine`.
+- Effective named-volume ownership/permissions after Docker initializes them, and durable filesystem capacity for PostgreSQL and private uploads.
+- Runtime PostgreSQL/Redis connectivity, credential validity, database least-privilege role setup, Redis behavior under eviction, and the ability to restrict Gunicorn access to the verified proxy path.
+- Actual TLS termination, certificate paths, HTTP/HTTPS routing, Host validation, client-header spoofing resistance through the live proxy, and Django secure-cookie/redirect behavior behind TLS.
+- Whether every possible application/admin path handling contact attachments enforces authorization. Storage URL generation currently returns a public-looking `/media/` URL for a synthetic private path; it is a known unresolved risk, not merely an assumption.
+- SMTP provider connectivity, TLS, sender authorization, successful delivery, and failure handling.
+- Scheduled off-server encrypted backups, key recovery, retention and access enforcement, alerts, paired database/upload recovery consistency, successful restore, and achieved RPO/RTO.
+- Monitoring, alert ownership, host firewall/SSH policy, resource headroom under real traffic, operational rollback, and application behavior during container replacement or Docker DNS changes.
+
+No production deployment, real service connection, certificate validation, data backup/restore, or public SEO activation has verified these points. Resolve and evidence each applicable item before production approval.
 
 ## Environment and data handling note
 
