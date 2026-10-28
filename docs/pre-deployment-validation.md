@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `cce8dae99bbbccf00901ac7de095bdd79cd83ef0` (`docs: document HTTPS proxy trust findings`).
+- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `088f2aaa0ee6a7aba780a8a73a98e732dad2bf39` (`docs: detail Django production checks`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -26,6 +26,15 @@
 - The application image must be supplied as an immutable digest. PostgreSQL, Redis, and Nginx use version tags, not digests. The PostgreSQL health check uses its configured role, and Redis checks authenticated `PING`; Redis password interpolation also places the password in the server process arguments. Keep Compose rendering output private because interpolated values may be sensitive.
 - The template has no automatic migration command or migration service, which avoids uncontrolled startup migrations. The web database URL uses `POSTGRES_USER`, which the official PostgreSQL image initializes as a superuser; create and configure a separate least-privilege runtime role before deployment. Compose CLI interpolation inputs must be supplied separately from web’s service-level `env_file`.
 - Static DNS resolution for the Nginx upstream may become stale after web-container replacement. HTTPS enablement in Compose also conflicts with Django’s currently unset trusted-proxy header and can cause redirect loops. These are deployment blockers requiring approved template/application changes before activation.
+
+## PostgreSQL and Redis isolation findings
+
+- PostgreSQL 17.6 and Redis 7.4.2 are on the Compose `data` network (`internal: true`) with no published host ports. This limits external routing; it does not isolate those services from each other or from web, which shares the network. Local PostgreSQL/Redis containers were not modified or restarted.
+- PostgreSQL stores data in the persistent `postgres_data` volume. Its `pg_isready` health check and web's healthy dependency gate startup on server availability, but do not prove the application credentials or full Django queries work. The Compose bootstrap role is also placed in `DATABASE_URL`; because the official PostgreSQL image initializes `POSTGRES_USER` as a superuser, production must use a separate least-privilege runtime role and preserve role/grant recreation in recovery procedures.
+- The template has no migration startup command or migration service. Migrations therefore remain a controlled operator action, with reviewed compatibility and backup state required before a release. PostgreSQL uses a version tag rather than an immutable digest; digest selection and update policy remain deployment tasks.
+- Redis requires a password, has an authenticated `PING` health check, a 128 MB memory cap, `allkeys-lru`, and both RDB/AOF persistence disabled. Authentication uses the default Redis user; there is no dedicated ACL user or per-service command isolation. This matches disposable cache/rate-limit data only; eviction can discard rate-limit state, so Redis must not become the sole store for sessions, jobs, or other durable state without revisiting the policy. The password is present in the container environment and expanded into the server process arguments.
+- Django configures its cache from `REDIS_URL`; production Compose injects an authenticated URL. That confirms the intended connection configuration statically, not runtime connectivity or ACL isolation. The backup plan covers PostgreSQL logical dumps and paired private-upload recovery, not Redis, which is intentionally disposable.
+- No database or Redis backup, restore, migration, reset, data export, or production service connection was performed. The persistent Postgres volume, backup encryption/off-server storage, restore rehearsal, and role/grant restoration remain production readiness requirements.
 
 ## Nginx findings
 
