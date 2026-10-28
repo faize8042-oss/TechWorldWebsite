@@ -31,7 +31,7 @@
         <article class="project-description">
             {% if project.cover_image %}
                 <figure class="project-detail-visual">
-                    <img class="project-detail-image" src="{{ project.cover_image.url }}" alt="Cover image for {{ project.title }}">
+                    <img class="project-detail-image" src="{{ project.cover_image.url }}" alt="Cover image for {{ project.title }}" loading="lazy">
                 </figure>
             {% else %}
                 <div class="project-detail-placeholder" role="img" aria-label="No cover image is available for {{ project.title }}">
