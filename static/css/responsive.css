@@ -17,16 +17,6 @@
     .footer-main {
         gap: 35px;
     }
-}
-
-@media (max-width: 760px) {
-    .container {
-        width: min(100% - 36px, var(--container-width));
-    }
-
-    .section {
-        padding-block: 64px;
-    }
 
     .navbar {
         position: relative;
@@ -97,6 +87,16 @@
 
     .theme-toggle {
         margin-top: 10px;
+    }
+}
+
+@media (max-width: 760px) {
+    .container {
+        width: min(100% - 36px, var(--container-width));
+    }
+
+    .section {
+        padding-block: 64px;
     }
 
     .grid-3,

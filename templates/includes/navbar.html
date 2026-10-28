@@ -1,7 +1,7 @@
 
 <header class="site-header">
     <nav class="container navbar" aria-label="Main navigation">
-        <a class="brand" href="/" aria-label="Codeventra Labs home">
+        <a class="brand" href="{% url 'home' %}" aria-label="Codeventra Labs home">
             <span class="brand-mark" aria-hidden="true">C</span>
             <span class="brand-name">Codeventra <span class="text-gradient">Labs</span></span>
         </a>
@@ -19,11 +19,11 @@
         </button>
 
         <div class="nav-links" id="primary-navigation">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/services/" class="nav-link">Services</a>
-            <a href="/projects/" class="nav-link">Projects</a>
-            <a href="/about/" class="nav-link">About</a>
-            <a href="/contact/" class="button button-small button-primary nav-cta">
+            <a href="{% url 'home' %}" class="nav-link"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Home</a>
+            <a href="{% url 'services' %}" class="nav-link"{% if request.resolver_match.url_name == 'services' %} aria-current="page"{% endif %}>Services</a>
+            <a href="{% url 'projects:list' %}" class="nav-link"{% if request.resolver_match.namespace == 'projects' %} aria-current="page"{% endif %}>Projects</a>
+            <a href="{% url 'about' %}" class="nav-link"{% if request.resolver_match.url_name == 'about' %} aria-current="page"{% endif %}>About</a>
+            <a href="{% url 'contact:contact' %}" class="button button-small button-primary nav-cta"{% if request.resolver_match.namespace == 'contact' %} aria-current="page"{% endif %}>
                 Let's Talk <span aria-hidden="true">↗</span>
             </a>
 

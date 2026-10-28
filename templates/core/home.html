@@ -27,10 +27,10 @@ Codeventra Labs builds web applications, custom software, AI solutions, and auto
             </p>
 
             <div class="hero-actions">
-                <a class="button button-primary" href="/contact/">
+                <a class="button button-primary" href="{% url 'contact:contact' %}">
                     Discuss your project <span aria-hidden="true">&#8599;</span>
                 </a>
-                <a class="button button-secondary" href="/services/">
+                <a class="button button-secondary" href="{% url 'services' %}">
                     Explore our services
                 </a>
             </div>
@@ -125,7 +125,7 @@ Codeventra Labs builds web applications, custom software, AI solutions, and auto
             </article>
         </div>
         <div class="home-services-link">
-            <a class="text-link" href="/services/">View all services <span aria-hidden="true">&#8594;</span></a>
+            <a class="text-link" href="{% url 'services' %}">View all services <span aria-hidden="true">&#8594;</span></a>
         </div>
     </div>
 </section>
@@ -172,7 +172,7 @@ Codeventra Labs builds web applications, custom software, AI solutions, and auto
                 <p>Tell us what you want to create, and we can discuss the next steps.</p>
             </div>
             <div class="cta-actions">
-                <a class="button button-primary" href="/contact/">
+                <a class="button button-primary" href="{% url 'contact:contact' %}">
                     Start a conversation <span aria-hidden="true">&#8599;</span>
                 </a>
             </div>
