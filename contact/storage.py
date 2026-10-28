@@ -12,3 +12,7 @@ class PrivateContactAttachmentStorage(FileSystemStorage):
         )
         kwargs.setdefault("base_url", None)
         super().__init__(*args, **kwargs)
+
+    def url(self, name):
+        """Private attachments are available only through authorized downloads."""
+        raise ValueError("Private attachments do not have public URLs.")

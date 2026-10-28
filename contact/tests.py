@@ -1,9 +1,11 @@
 
 from io import BytesIO
+from pathlib import Path
 from unittest.mock import patch
 
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 
@@ -262,3 +264,14 @@ class ContactRateLimitTests(TestCase):
         )
 
         self.assertEqual(mock_send_mail.call_count, 6)
+
+
+class PrivateAttachmentStorageTests(SimpleTestCase):
+    def test_contact_attachments_have_no_public_url_or_media_path(self):
+        storage = ContactSubmission._meta.get_field("attachment").storage
+        private_root = Path(settings.BASE_DIR) / "private_uploads"
+
+        self.assertEqual(Path(storage.location), private_root)
+        self.assertNotEqual(Path(storage.location), Path(settings.MEDIA_ROOT))
+        with self.assertRaises(ValueError):
+            storage.url("contact_attachments/synthetic-test-file.pdf")
