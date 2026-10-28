@@ -158,7 +158,7 @@ Several blockers require application or deployment-template changes. They are do
 
 ## Domain and hosting restrictions
 
-- [DEFERRED] Do not register or purchase a domain, create a hosting account, purchase/provision a VPS, start provider trials, or add paid services in this phase.
+- [DEFERRED] Do not register or purchase a domain, create a hosting account, check out or purchase hosting services, purchase/provision a VPS, start provider trials, or add paid services in this phase.
 - [DEFERRED] Do not configure or change public DNS, publish an IP address, request or install a production certificate, expose the site publicly, or deploy production services.
 - [DEFERRED] Do not create production credentials or place them in the repository, local `.env`, command history, rendered Compose output, or logs. The user's `.env` access restriction remains in force.
 - [DEFERRED] Do not enable public indexing, set a real production SEO origin, or submit sitemaps. Keep SEO indexing disabled until its separate approval gate is satisfied.
