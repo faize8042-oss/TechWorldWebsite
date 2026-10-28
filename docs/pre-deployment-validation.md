@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `36b4aa1a5b8d60f6bbe7b7787d02d5f191b1379c` (`docs: list unverified deployment assumptions`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `a1d3d3ba1ae9bbdebb9bf00872469f4025893e1f` (`docs: summarize outstanding security blockers`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -141,6 +141,15 @@ Do not expose the proposed production stack publicly until these are resolved, r
 - **Operations and recovery:** host firewall/SSH policy, resource limits, effective persistent-volume permissions, encrypted off-server backup implementation, key recovery, retention/alerts, and a successful isolated database-plus-upload restore are not in place or verified. Treat their absence as launch blockers for any production data.
 
 Several blockers require application or deployment-template changes. They are documented only; no active Django settings, production Compose/Nginx template, credentials, local services, or data were changed to address them in this report update.
+
+## Domain and hosting prerequisites
+
+- **Current state:** `codeventralabs.com` has not been purchased; no VPS has been purchased or provisioned; DNS, public certificates, production secrets, and live deployment do not exist. Nothing in this report authorizes purchase, account creation, DNS changes, or deployment.
+- Before selecting a domain, confirm registrar pricing and renewal, ownership/control, account recovery/MFA, and the canonical hostnames. Once approved and registered, plan and verify A/AAAA records and propagation from external resolvers before requesting a certificate. Do not configure a real hostname or DNS in this phase.
+- Hosting preference remains Hetzner Cloud, subject to account eligibility, region availability, capacity, and checkout. The existing cost plan was checked on 2026-10-28 and is provisional: CX23/CX33 were marked unavailable at that check. The listed CX33 server, IPv4, and provider-backup subtotal was about $12.59/month before VAT, leaving about $7.41 under a $20 ceiling for independent encrypted backups, domain, email, tax, and monitoring. The complete total has not been verified within the $10–20 budget. Recheck prices, availability, taxes, storage, and billing before any purchase decision; DigitalOcean's compared option was above budget before domain and external-backup costs.
+- Before provisioning, approve the provider, region, plan, total monthly cost, storage/capacity headroom, access owners, and recovery path. Select an independent encrypted backup destination and confirm its access and cost. A single VPS is one failure domain and does not provide high availability.
+- Before allowing public traffic, prepare a reviewed host firewall and SSH recovery policy: allow only the chosen SSH port and web ports 80/443, restrict SSH sources where feasible, and block public PostgreSQL, Redis, Gunicorn, and Docker API access. Apply and verify those controls only after a separately approved provisioning step.
+- After domain/DNS and host networking are confirmed, obtain a real certificate through a reviewed challenge/bootstrap process, configure renewal, replace all placeholders, and validate the exact pinned Nginx image/config. Keep the existing production templates inactive until the outstanding security blockers are resolved and deployment is explicitly approved.
 
 ## Environment and data handling note
 
