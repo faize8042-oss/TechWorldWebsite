@@ -2,6 +2,12 @@
 
 **Scope:** local review of the Phase C4 production proposal, including production Compose and Nginx templates, Django production checks, proxy trust, data isolation, private attachment handling, backup guidance, and local regression/HTTP checks. No production deployment, service start, database migration, backup, restore, domain/DNS setup, or SEO activation was performed. This is not an assertion that production is ready.
 
+## Authorized file scope
+
+- Authorized documentation files: `docs/pre-deployment-validation.md`, `docs/deployment-architecture.md`, `docs/launch-checklist.md`, and `docs/production-readiness.md`.
+- `.env.example` may be changed only if necessary for safe documentation. `.env` is never authorized: do not read, print, modify, copy, mount, or expose it, and do not inspect real secret values.
+- Do not modify other files under this scope. The existing uncommitted `contact/tests.py` change is outside this file list; it remains untouched and unstaged.
+
 **Verification date:** 2026-10-28 (local validation recorded below).
 
 **Status labels:** `[VERIFIED]` an exact check result or fact was tested or directly confirmed within the stated scope; it does not imply broader production control effectiveness. `[VERIFIED WITH WARNINGS]` a check completed with disclosed warnings. `[PROPOSED]` a design or target not approved or implemented; `[DEFERRED]` intentionally left to a later phase; `[FAIL]` a check failed; `[BLOCKED]` cannot proceed until a defect or prerequisite is resolved; `[NOT RUN]` intentionally not performed; `[UNVERIFIED]` not established by available evidence; `[NOT IN PLACE]` absent; `[UNCOMMITTED]` present only as an unstaged/uncommitted change; `[PENDING APPROVAL]` awaits explicit approval.
@@ -15,7 +21,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `65b6d0b3c196193d82637d39324db1b5be589b82` (`docs: require user approval for domain and VPS purchases`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `8aee2118417a610e74ebe1469b8eed10dc7a83bd` (`docs: mark hosting account status unverified`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
