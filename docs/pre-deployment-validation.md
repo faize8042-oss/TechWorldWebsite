@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `a1d3d3ba1ae9bbdebb9bf00872469f4025893e1f` (`docs: summarize outstanding security blockers`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `7f8db2cdc7593c45976e701750ef98813a859fd3` (`docs: add domain and hosting prerequisites`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -150,6 +150,21 @@ Several blockers require application or deployment-template changes. They are do
 - Before provisioning, approve the provider, region, plan, total monthly cost, storage/capacity headroom, access owners, and recovery path. Select an independent encrypted backup destination and confirm its access and cost. A single VPS is one failure domain and does not provide high availability.
 - Before allowing public traffic, prepare a reviewed host firewall and SSH recovery policy: allow only the chosen SSH port and web ports 80/443, restrict SSH sources where feasible, and block public PostgreSQL, Redis, Gunicorn, and Docker API access. Apply and verify those controls only after a separately approved provisioning step.
 - After domain/DNS and host networking are confirmed, obtain a real certificate through a reviewed challenge/bootstrap process, configure renewal, replace all placeholders, and validate the exact pinned Nginx image/config. Keep the existing production templates inactive until the outstanding security blockers are resolved and deployment is explicitly approved.
+
+## Exact future deployment approval gates
+
+Each gate requires recorded approval from the designated project/infrastructure owner. Approval for one gate does not authorize later gates. Current status: **all gates pending**.
+
+1. **Commercial and ownership approval, before purchase:** approve the registrar/domain, canonical hostnames, provider/account eligibility, VPS plan/region, exact recurring and one-time costs including tax, IPv4, provider and independent backups, domain, email, and monitoring. Confirm the total meets the approved budget. No purchase is authorized by this report.
+2. **Host provisioning and hardening approval, before public traffic:** approve the VPS provision, account recovery/MFA and access owners, SSH recovery-tested policy, firewall rules, host update/logging plan, resource limits, Docker access, and non-conflicting network ranges. Verify PostgreSQL, Redis, Gunicorn, and Docker API are not publicly reachable.
+3. **Data protection approval, before production data is stored:** approve least-privilege database/runtime/migration/backup roles, private-upload persistence and permissions, Redis disposable-data policy, secret custody and recovery, encrypted independent backup destination, retention/access controls, failure alerts, paired database/upload process, and a successful isolated restore. Approve measurable RPO/RTO targets.
+4. **Security and release readiness approval, before production image/config activation:** close the blockers in this report, including Django/Nginx HTTPS trust, Gunicorn network isolation, canonical Host redirect, private attachment URL behavior, Redis secret handling, certificate bootstrap/renewal, and exact image digests. Validate production checks, Nginx with the exact image and real certificate paths, Compose rendering, volume permissions, HTTP/HTTPS behavior, secure cookies, CSRF, unknown-host rejection, SMTP, and attachment authorization without exposing real submissions.
+5. **Migration approval, immediately before schema changes:** approve the exact release commit/image digest, reviewed migration plan and compatibility/rollback strategy, recent readable off-server paired backups, and one-off migration command. Do not infer migration approval from deployment approval.
+6. **Production deployment approval, before starting/updating production services:** approve the exact Compose/config/image set, secret version references, operators, maintenance window, service actions, health checks, monitoring/alerts, and rollback/forward-fix plan. This must be a separate explicit approval after gates 1–5 pass.
+7. **Public DNS/traffic cutover approval:** after the deployed service passes TLS, endpoint, health, security, delivery, and recovery checks, approve the exact DNS records/cutover and rollback trigger. Domain registration and certificate issuance alone do not authorize traffic cutover.
+8. **SEO activation approval:** separately approve setting the real HTTPS `SEO_SITE_URL`, enabling indexing, reviewing canonical pages/sitemap/robots and published content, and submitting sitemaps. Keep indexing disabled until this gate passes.
+
+Record the approver, date, approved artifact/config identifiers, evidence links, accepted residual risks, and rollback owner for each gate. A failed or unverified prerequisite keeps its gate closed.
 
 ## Environment and data handling note
 
