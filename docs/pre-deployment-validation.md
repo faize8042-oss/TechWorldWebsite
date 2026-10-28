@@ -11,6 +11,11 @@
 - Working tree: clean before this phase.
 - Phase C4 deployment proposal and local safeguards are present.
 
+## Current Git baseline
+
+- Verified on 2026-10-28, branch `feature/codeventra-ui`, at commit `89a00a167b8a06ac33740f7fc0a42ae6c64de68b` (`docs: add validation scope and date`).
+- The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
+
 ## Architecture review
 
 - Production topology is isolated in `deploy/compose.production.yaml`; local `compose.yaml` is development configuration and remains untouched.
