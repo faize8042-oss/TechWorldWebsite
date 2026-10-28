@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `e9a0267c5a46133937f3be82f4fd8fe136cc2f67` (`docs: detail database and Redis isolation`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `3cfe0b8854c5ab8b97d9baad7561e7b0a3331ea2` (`docs: document private attachment security`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -35,6 +35,15 @@
 - Redis requires a password, has an authenticated `PING` health check, a 128 MB memory cap, `allkeys-lru`, and both RDB/AOF persistence disabled. Authentication uses the default Redis user; there is no dedicated ACL user or per-service command isolation. This matches disposable cache/rate-limit data only; eviction can discard rate-limit state, so Redis must not become the sole store for sessions, jobs, or other durable state without revisiting the policy. The password is present in the container environment and expanded into the server process arguments.
 - Django configures its cache from `REDIS_URL`; production Compose injects an authenticated URL. That confirms the intended connection configuration statically, not runtime connectivity or ACL isolation. The backup plan covers PostgreSQL logical dumps and paired private-upload recovery, not Redis, which is intentionally disposable.
 - No database or Redis backup, restore, migration, reset, data export, or production service connection was performed. The persistent Postgres volume, backup encryption/off-server storage, restore rehearsal, and role/grant restoration remain production readiness requirements.
+
+## Backup and restore readiness findings
+
+- Reviewed the backup procedure in `docs/production-readiness.md`, the recovery notes in `docs/deployment-architecture.md`, and the launch checklist on 2026-10-29. The sample PostgreSQL command uses custom-format `pg_dump`, a protected `PGPASSFILE` (documented, not created), TLS `sslmode=verify-full`, restrictive `umask`, a unique run directory created with `mkdir` (which fails if it already exists), a `.partial` filename, `pg_restore --list`, and a final rename after that listing succeeds. Static review found no reset/drop/clean command or production restore command in the example. No backup/restore command was run.
+- This is guidance, not an implemented backup system. The run ID remains a placeholder; scheduling, provider, off-server encrypted storage, encryption and key custody/recovery, access policy, retention enforcement, checksum generation/verification, monitoring, and failure alerts have not been selected or deployed. The command's archive listing is a preliminary check, not a substitute for a full isolated restore.
+- Private-upload protection is covered at the policy level: back up encrypted files to restricted independent storage and coordinate that copy with a database recovery point (or pause writes). A protected manifest/checksum and restored file-reference check are specified. There is no concrete upload-backup command or automated consistency mechanism yet.
+- Restore guidance calls for a disposable PostgreSQL instance and isolated upload target with no production route, recreation of database roles/ownership/grants omitted by `--no-owner --no-acl`, schema/application smoke checks, and file-reference verification. The example does not include a full restore command; no real or synthetic restore rehearsal was performed.
+- Proposed RPO 24 hours and RTO 8 hours are planning targets only. They are not approved or measured. A single VPS remains a single failure domain. Image/config rollback does not reverse incompatible or irreversible migrations; use backward-compatible migrations or a separately tested forward-fix/restore plan, and never treat production restore as an ad hoc rollback.
+- No database export, private-upload copy, unencrypted archive, restore, or production-data operation occurred during this audit. The documented sample's `mv` only publishes a completed archive within the unique run directory; it does not delete its source or touch a database.
 
 ## Nginx findings
 
@@ -86,7 +95,7 @@
 - A behavior-based test using only a synthetic path found `storage.url()` does not raise `ValueError`; the storage backend can generate a `/media/` URL even though the file resides outside public media. Compose volume separation means this does not establish direct exposure of a real private file, but URL generation is a confirmed privacy risk and should be disabled in the storage backend. The focused regression test in `contact/tests.py` currently fails and remains unstaged. Changing `contact/storage.py` requires approval; no application-code fix has been made.
 - Existing model validation limits attachments to 5 MB and validates PDF/PNG/JPEG content; tests cover accepted synthetic files and invalid/oversize files. This does not replace access-control review or malware scanning. No real attachment, private file path, or customer record was opened.
 - PostgreSQL has a persistent named volume and no published port. Redis has no published port. Production data does not exist in this local validation.
-- Backup guidance now documents unique non-overwriting runs, archive validation before completion, role/grant recreation, paired database/upload recovery points, and file verification in an isolated restore. Backup storage, encryption/key recovery, alerting, and actual restore rehearsal remain unimplemented. No backup or restore was performed. Proposed RPO/RTO are planning values only, not measured guarantees.
+- Backup and recovery safeguards and their implementation gaps are detailed in the dedicated section above. No backup or restore was performed.
 - Do not put a password in a database URI passed on the `pg_dump` command line. Use a protected `PGPASSFILE` and non-secret connection parameters, then encrypt and transfer the resulting dump using the approved backup process.
 
 ## Validation record
