@@ -5,10 +5,13 @@ from django.contrib import admin
 from django.urls import include, path
 
 from core import views
+from core import seo
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("sitemap.xml", seo.sitemap, name="sitemap"),
+    path("robots.txt", seo.robots, name="robots"),
 
     path("", views.home, name="home"),
     path("services/", views.services, name="services"),

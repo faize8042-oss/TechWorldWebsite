@@ -2,7 +2,12 @@
 {% load static %}
 
 {% block title %}{{ project.title }} | Codeventra Labs Projects{% endblock %}
-{% block meta_description %}{{ project.summary }}{% endblock %}
+{% block og_title %}{{ project.title }} | Codeventra Labs Projects{% endblock %}
+{% block twitter_title %}{{ project.title }} | Codeventra Labs Projects{% endblock %}
+{% block meta_description %}{{ project.summary|truncatechars:160 }}{% endblock %}
+{% block og_description %}{{ project.summary|truncatechars:160 }}{% endblock %}
+{% block twitter_description %}{{ project.summary|truncatechars:160 }}{% endblock %}
+{% block og_type %}article{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/projects.css' %}">

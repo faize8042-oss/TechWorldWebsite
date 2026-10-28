@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from urllib.parse import urlsplit
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,6 +34,28 @@ ALLOWED_HOSTS = env.list(
     "ALLOWED_HOSTS",
     default=["localhost", "127.0.0.1"],
 )
+
+# SEO stays non-indexable until a real public origin is configured and
+# indexing is explicitly enabled. This is independent of DEBUG.
+SEO_SITE_URL = env("SEO_SITE_URL", default="").strip().rstrip("/")
+SEO_INDEXING_ENABLED = env.bool("SEO_INDEXING_ENABLED", default=False)
+
+if SEO_SITE_URL:
+    parsed_seo_site_url = urlsplit(SEO_SITE_URL)
+    if (
+        parsed_seo_site_url.scheme != "https"
+        or not parsed_seo_site_url.hostname
+        or parsed_seo_site_url.username
+        or parsed_seo_site_url.password
+        or parsed_seo_site_url.path
+        or parsed_seo_site_url.query
+        or parsed_seo_site_url.fragment
+        or parsed_seo_site_url.hostname.lower() in {"localhost", "127.0.0.1", "::1"}
+    ):
+        raise ValueError("SEO_SITE_URL must be an HTTPS origin for the public site.")
+
+if SEO_INDEXING_ENABLED and not SEO_SITE_URL:
+    raise ValueError("SEO_SITE_URL is required when SEO_INDEXING_ENABLED is True.")
 
 # Application definition
 
@@ -87,6 +110,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'core.context_processors.seo_context',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
