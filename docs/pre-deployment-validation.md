@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `b75f359b48588143baf587fbd03ba8f707c63163` (`docs: prohibit remote server access in this phase`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `65b6d0b3c196193d82637d39324db1b5be589b82` (`docs: require user approval for domain and VPS purchases`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -149,6 +149,7 @@ Several blockers require application or deployment-template changes. They are do
 ## Domain and hosting prerequisites
 
 - [NOT IN PLACE] `codeventralabs.com` has not been purchased; no VPS has been purchased or provisioned; DNS, public certificates, production secrets, and live deployment do not exist. Nothing in this report authorizes purchase, account creation, DNS changes, or deployment.
+- [UNVERIFIED] Whether a hosting-provider account exists or is eligible; no provider account was inspected. Do not assume an account exists.
 - [DEFERRED] Domain/VPS purchase, DNS configuration, real certificate issuance, production deployment, database migration/backup/restore, and SEO activation are outside Phase C5 and require their applicable approval gates below.
 - Before selecting a domain, confirm registrar pricing and renewal, ownership/control, account recovery/MFA, and the canonical hostnames. Once approved and registered, plan and verify A/AAAA records and propagation from external resolvers before requesting a certificate. Do not configure a real hostname or DNS in this phase.
 - [PROPOSED] Hosting preference remains Hetzner Cloud, subject to account eligibility, region availability, capacity, and checkout. The existing cost plan was checked on 2026-10-28 and is provisional: CX23/CX33 were marked unavailable at that check. The listed CX33 server, IPv4, and provider-backup subtotal was about $12.59/month before VAT, leaving about $7.41 under a $20 ceiling for independent encrypted backups, domain, email, tax, and monitoring. The complete total has not been verified within the $10–20 budget. Recheck prices, availability, taxes, storage, and billing before any purchase decision; DigitalOcean's compared option was above budget before domain and external-backup costs.
