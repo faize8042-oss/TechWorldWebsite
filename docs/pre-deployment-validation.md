@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `3cfe0b8854c5ab8b97d9baad7561e7b0a3331ea2` (`docs: document private attachment security`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `d8943a991c90a34faf0709a51b72d69d969d26aa` (`docs: audit backup and restore readiness`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -98,19 +98,19 @@
 - Backup and recovery safeguards and their implementation gaps are detailed in the dedicated section above. No backup or restore was performed.
 - Do not put a password in a database URI passed on the `pg_dump` command line. Use a protected `PGPASSFILE` and non-secret connection parameters, then encrypt and transfer the resulting dump using the approved backup process.
 
-## Validation record
+## Verified automated checks
 
-Placeholder-only Compose rendering is a syntax/configuration check, not evidence that images, credentials, networks, or runtime behavior are production-ready.
+The Compose, Nginx, Django, focused-test, local HTTP, and service-status checks below were run on 2026-10-28. `git diff --check` passed during this report update on 2026-10-29. This documentation-only update did not rerun application checks. Placeholder-only Compose rendering is a syntax/configuration check, not evidence that images, credentials, networks, or runtime behavior are production-ready.
 
 - Production Compose config validation: **passed** with `docker compose config --quiet`, explicit placeholder-only environment files under system temp, and no services started. No real credentials were used.
 - Production Nginx syntax validation: **passed** using local image digest `sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5` on Docker's `none` network. A synthetic self-signed certificate was generated inside a disposable offline helper container and removed after `nginx -t`. This is syntax-only and does not validate the production-pinned `nginx:1.28.1-alpine`, real certificate, TLS, DNS, or proxy behavior.
 - `python manage.py check`: **passed**, no issues. `check --deploy` completed with five local warnings: HSTS unset, SSL redirect off, secure session cookie off, secure CSRF cookie off, and `DEBUG=True`.
 - Last full Django suite: **49 passed** before focused test additions. It created and removed a temporary test database through the local PostgreSQL service. No full-suite rerun followed the user's instruction not to execute migrations.
-- Focused configuration suite: **18 passed** in a disposable network-isolated container with placeholders and `SimpleTestCase` settings overrides. This corresponds to the original 8 config tests plus 10 new tests; expected full-suite count is 59, not fully rerun.
+- Focused configuration suite: **18 passed** in a disposable network-isolated container with placeholders and `SimpleTestCase` settings overrides, including 10 newly added production-configuration tests. The expected full-suite count after those ten tests is 59, but that full suite was not run. The additional private-storage regression test described below is not part of that passing run.
 - Focused private-storage behavior test: **failed** as expected because `storage.url()` did not raise `ValueError`. It used a synthetic filename only, no database/migration, and did not open or create an attachment. The test change in `contact/tests.py` is uncommitted; no storage implementation change has been made pending approval.
 - Local HTTP GET checks: **passed** for `/`, `/about/`, `/services/`, `/projects/`, `/contact/`, `/privacy/`, `/terms/`, `/sitemap.xml`, `/robots.txt`, and `/health/` (all 200, expected HTML/XML/plain-text content types). Public HTML pages contained `noindex, nofollow`. Health returned only `ok` as `text/plain` and `Cache-Control: no-store`.
 - Existing Compose services: **db, web, nginx, and redis were up**; PostgreSQL and Redis reported healthy. No service was recreated. No production container, network, or volume was started or created. Docker build was not run.
-- Automated tests added: 10 committed config tests; one additional private-storage test remains uncommitted and currently fails pending the application-code fix.
+- Automated tests added: 10 committed configuration tests passed in the focused run; one additional private-storage test remains uncommitted and currently fails pending the application-code fix. The baseline full-suite result remains 49; do not report 59 as a verified full-suite pass.
 
 ## Environment and data handling note
 
