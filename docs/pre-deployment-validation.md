@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `088f2aaa0ee6a7aba780a8a73a98e732dad2bf39` (`docs: detail Django production checks`).
+- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `e9a0267c5a46133937f3be82f4fd8fe136cc2f67` (`docs: detail database and Redis isolation`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -81,7 +81,10 @@
 
 ## Data protection and recovery review
 
-- Contact attachments use a separate private storage root and the production Compose template mounts its private volume only into web. Nginx mounts public media only. A behavior-based test found that the storage backend can still generate a `/media/` URL; the production volume separation prevents Nginx from directly serving that private volume, but storage URL generation should be disabled. The focused test is pending a storage-code fix. No real attachments were read or changed.
+- The contact model stores uploads under `private_uploads/contact_attachments/`, separate from `MEDIA_ROOT`. The production Compose template mounts the private volume read-write only into web; Nginx mounts only the public-media volume read-only and aliases only that public path. The production Nginx mount therefore cannot directly serve the private volume.
+- The application image creates and chowns `/app/private_uploads` for UID 10001 and runs as non-root. Docker's initialization/ownership behavior for a newly created named volume has not been rehearsed; verify effective ownership and restrictive permissions with synthetic data before deployment. Existing private files were not inspected or changed.
+- A behavior-based test using only a synthetic path found `storage.url()` does not raise `ValueError`; the storage backend can generate a `/media/` URL even though the file resides outside public media. Compose volume separation means this does not establish direct exposure of a real private file, but URL generation is a confirmed privacy risk and should be disabled in the storage backend. The focused regression test in `contact/tests.py` currently fails and remains unstaged. Changing `contact/storage.py` requires approval; no application-code fix has been made.
+- Existing model validation limits attachments to 5 MB and validates PDF/PNG/JPEG content; tests cover accepted synthetic files and invalid/oversize files. This does not replace access-control review or malware scanning. No real attachment, private file path, or customer record was opened.
 - PostgreSQL has a persistent named volume and no published port. Redis has no published port. Production data does not exist in this local validation.
 - Backup guidance now documents unique non-overwriting runs, archive validation before completion, role/grant recreation, paired database/upload recovery points, and file verification in an isolated restore. Backup storage, encryption/key recovery, alerting, and actual restore rehearsal remain unimplemented. No backup or restore was performed. Proposed RPO/RTO are planning values only, not measured guarantees.
 - Do not put a password in a database URI passed on the `pg_dump` command line. Use a protected `PGPASSFILE` and non-secret connection parameters, then encrypt and transfer the resulting dump using the approved backup process.
