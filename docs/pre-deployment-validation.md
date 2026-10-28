@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `087062b1a3cca56c50cb6481b226ac152028754c` (`docs: prohibit production environment activation`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `3a178c1755cbec6bc62b9c72df47d5f0cf5ab5ef` (`docs: prohibit website deployment in this phase`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -160,6 +160,7 @@ Several blockers require application or deployment-template changes. They are do
 
 - [DEFERRED] Do not register or purchase a domain, create a hosting account, check out or purchase hosting services, create a Hetzner server or any other VPS, start provider trials, or add paid services in this phase.
 - [DEFERRED] Do not configure or change public DNS, publish an IP address, request or install a production certificate, expose the site publicly, or deploy the website or production services.
+- [DEFERRED] Do not connect to a remote server or remote production service, including SSH, database, Redis, or web endpoints. Checks in this phase are limited to local resources and isolated test containers.
 - [DEFERRED] Do not create production credentials or place them in the repository, local `.env`, command history, rendered Compose output, or logs. The user's `.env` access restriction remains in force.
 - [DEFERRED] Do not activate or load production environment variables in this local phase; do not set `DEPLOYMENT_MODE=production` or source a production environment file.
 - [DEFERRED] Do not enable public indexing, set a real production SEO origin, or submit sitemaps. Keep SEO indexing disabled until its separate approval gate is satisfied.
