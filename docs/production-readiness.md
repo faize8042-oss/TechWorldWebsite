@@ -67,13 +67,22 @@ Use `pg_dump` in custom format over a protected connection, writing directly to 
 # Set PGPASSFILE to a protected, mode-0600 file with the database password.
 # Supply non-secret connection fields as a libpq keyword string; do not put
 # the password in a URI or command argument.
-pg_dump --format=custom --no-owner --no-acl --file=/secure-backup/codeventra-YYYYMMDD.dump --dbname="host=DB_HOST port=5432 dbname=DB_NAME user=BACKUP_USER sslmode=verify-full"
-pg_restore --list /secure-backup/codeventra-YYYYMMDD.dump
+set -eu
+umask 077
+RUN_ID=YYYYMMDDTHHMMSSZ-UNIQUE_ID
+mkdir -m 0700 "/secure-backup/$RUN_ID"  # Fails if this run directory already exists.
+pg_dump --format=custom --no-owner --no-acl --file="/secure-backup/$RUN_ID/database.dump.partial" --dbname="host=DB_HOST port=5432 dbname=DB_NAME user=BACKUP_USER sslmode=verify-full"
+pg_restore --list "/secure-backup/$RUN_ID/database.dump.partial"
+mv "/secure-backup/$RUN_ID/database.dump.partial" "/secure-backup/$RUN_ID/database.dump"
 ```
 
 Restrict backup access, encrypt in transit and at rest, and define retention based on business recovery objectives, legal/privacy obligations, and available storage. Keep backups separate from the production host and test restore access regularly. Integrity checks should include successful `pg_dump`, `pg_restore --list`, and periodic restore rehearsals.
 
-For a rehearsal, provision an isolated, disposable PostgreSQL instance with no production network route and a separate database name. Restore the candidate dump there using a dedicated rehearsal credential, run schema/application smoke checks, confirm expected record counts without exporting personal data, then securely delete the isolated instance and its files. Never point restore commands at production or an existing live database. This phase performs no backup or restore.
+The example run ID is a placeholder; generate a unique UTC value for each run. Write only to access-controlled encrypted storage. The new run directory prevents a repeated identifier from silently overwriting an earlier archive, and the final rename marks completion only after the dump and archive listing succeed. Record and protect a checksum separately from the archive; monitor failures and alert an owner. The storage provider, encryption mechanism, key custody/recovery, retention enforcement, and alerting are not selected or implemented.
+
+The command uses `--no-owner --no-acl`; `pg_dump` also omits cluster-wide roles and tablespaces. Before restore, recreate the required database, least-privilege application/migration roles, ownership, and grants from reviewed provisioning instructions. Keep role passwords in secret management, not in backup scripts or SQL exports. The current template also uses the PostgreSQL initialization superuser for the application URL; replace that arrangement with a dedicated runtime role before launch.
+
+For a rehearsal, provision an isolated, disposable PostgreSQL instance with no production network route and a separate database name. Restore the candidate dump there using a dedicated rehearsal credential, run schema/application smoke checks, confirm expected record counts without exporting personal data, then securely delete the isolated instance and its files. Restore the paired private-upload backup to an isolated storage target too; confirm files referenced by restored records exist and compare a protected file manifest/checksum. Coordinate the database snapshot and upload snapshot (or pause writes) and record them as one recovery point so records do not refer to missing files. Never point restore commands at production or an existing live database. This phase performs no backup or restore.
 
 ## SMTP, attachments, and static assets
 

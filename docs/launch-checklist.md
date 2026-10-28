@@ -33,8 +33,11 @@ See the [Phase C5 pre-deployment validation](pre-deployment-validation.md) for t
 - [ ] Confirm PostgreSQL and Redis have no public ports and database/admin access is restricted.
 - [ ] Confirm named-volume ownership and application write access in a disposable rehearsal.
 - [ ] Configure scheduled encrypted logical PostgreSQL backups and encrypted private-upload backups to independent off-server storage.
-- [ ] Set and document retention, access control, integrity verification, encryption-key recovery, and backup failure alerts.
-- [ ] Verify a database backup and upload backup, then successfully rehearse restoration in an isolated environment with no production route. A snapshot alone is not complete backup validation.
+- [ ] Pin the backup/restore client to a PostgreSQL 17-compatible version; use unique run IDs, refuse archive overwrite, and publish only validated completed backups.
+- [ ] Document recreation of least-privilege roles, ownership, and grants omitted by `--no-owner --no-acl`; keep role passwords in secret management.
+- [ ] Set and document retention enforcement, restricted access, encryption/key recovery, protected checksums/manifests, and backup failure alerts.
+- [ ] Pair database and private-upload backups to a consistent recovery point; verify restored database file references against restored files.
+- [ ] Verify a database backup and upload backup, then successfully rehearse full restoration in an isolated environment with no production route. A snapshot alone is not complete backup validation.
 - [ ] Approve measurable RPO/RTO targets. Current planning proposal is 24-hour RPO and 8-hour RTO; these are not achieved guarantees.
 
 ## Release and rollback
