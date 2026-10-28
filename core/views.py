@@ -1,4 +1,5 @@
 
+from django.http import HttpResponse
 from django.shortcuts import render
 
 
@@ -20,3 +21,10 @@ def privacy(request):
 
 def terms(request):
     return render(request, "core/terms.html")
+
+
+def health(request):
+    """Minimal application liveness response; does not probe dependencies."""
+    response = HttpResponse("ok\n", content_type="text/plain; charset=utf-8")
+    response["Cache-Control"] = "no-store"
+    return response

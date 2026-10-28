@@ -144,6 +144,7 @@ class SEOFoundationTests(TestCase):
         self.assertIn(f"https://example.org{published.get_absolute_url()}", locs)
         self.assertNotIn(f"https://example.org{draft.get_absolute_url()}", locs)
         self.assertFalse(any("/admin/" in loc for loc in locs))
+        self.assertFalse(any("/health/" in loc for loc in locs))
         expected_paths = [reverse(name) for name in (
             "home",
             "about",

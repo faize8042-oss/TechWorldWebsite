@@ -9,6 +9,7 @@ from core import seo
 
 
 urlpatterns = [
+    path("health/", views.health, name="health"),
     path("admin/", admin.site.urls),
     path("sitemap.xml", seo.sitemap, name="sitemap"),
     path("robots.txt", seo.robots, name="robots"),

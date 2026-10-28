@@ -30,10 +30,14 @@ environ.Env.read_env(BASE_DIR / ".env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
+DEPLOYMENT_MODE = env("DEPLOYMENT_MODE", default="development").strip().lower()
+if DEPLOYMENT_MODE not in {"development", "production"}:
+    raise ValueError("DEPLOYMENT_MODE must be 'development' or 'production'.")
 ALLOWED_HOSTS = env.list(
     "ALLOWED_HOSTS",
     default=["localhost", "127.0.0.1"],
 )
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 # SEO stays non-indexable until a real public origin is configured and
 # indexing is explicitly enabled. This is independent of DEBUG.
@@ -72,6 +76,10 @@ INSTALLED_APPS = [
     "contact",
     "analytics",
 ]
+
+# Importing registers deployment-only system checks without network access.
+if DEPLOYMENT_MODE == "production":
+    from config import checks  # noqa: F401
 
 # Shared Redis cache for rate limiting
 REDIS_URL = env(
@@ -250,6 +258,10 @@ SECURE_HSTS_SECONDS = (
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False
 
+# Forwarded protocol headers remain untrusted until a verified TLS proxy
+# overwrites them and direct access to Gunicorn is blocked.
+SECURE_PROXY_SSL_HEADER = None
+
 
 
 # Privacy-aware analytics configuration.
@@ -265,3 +277,17 @@ ANALYTICS_RETENTION_DAYS = env.int(
 
 # Trusted Nginx reverse proxy
 TRUSTED_PROXY_IPS = ["172.20.0.10"]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
+}

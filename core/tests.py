@@ -32,6 +32,15 @@ class PublicPageTests(TestCase):
         response = self.client.get("/this-page-does-not-exist/")
         self.assertEqual(response.status_code, 404)
 
+    def test_health_endpoint_is_minimal_and_available_over_local_http(self):
+        response = self.client.get(reverse("health"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/plain; charset=utf-8")
+        self.assertEqual(response["Cache-Control"], "no-store")
+        self.assertEqual(response.content, b"ok\n")
+        for sensitive in ("SECRET_KEY", "DATABASE_URL", "password", "postgres"):
+            self.assertNotIn(sensitive.encode().lower(), response.content.lower())
+
     def test_shared_accessibility_navigation_markup_is_rendered(self):
         response = self.client.get(reverse("home"))
         self.assertContains(response, 'class="skip-link" href="#main-content"')

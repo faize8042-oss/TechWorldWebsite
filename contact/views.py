@@ -58,10 +58,11 @@ def contact(request):
                     recipient_list=[settings.CONTACT_EMAIL],
                     fail_silently=False,
                 )
-            except Exception:
-                logger.exception(
-                    "Contact notification email failed for submission %s",
+            except Exception as exc:
+                logger.warning(
+                    "Contact notification email failed for submission %s (%s)",
                     submission.pk,
+                    type(exc).__name__,
                 )
 
                 messages.warning(
