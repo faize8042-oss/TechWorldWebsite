@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `36c7f49d240b82dae418c01db9c3618c8e747b6f` (`docs: record production Nginx findings`).
+- Verified on 2026-10-28 before this report update: branch `feature/codeventra-ui`, commit `cce8dae99bbbccf00901ac7de095bdd79cd83ef0` (`docs: document HTTPS proxy trust findings`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -61,8 +61,12 @@
 
 ## Django and proxy review
 
-- Production-only checks require a long secret, `DEBUG=False`, confirmed hosts, HTTPS CSRF origins, PostgreSQL, SMTP credentials, and explicit HTTPS enablement. They do not connect to those services.
-- Redirects and secure cookies require `ENABLE_HTTPS=True`; HSTS defaults to zero. `SECURE_PROXY_SSL_HEADER` is unset while production Compose forces `ENABLE_HTTPS=True`. Behind TLS-terminating Nginx, this can cause redirect loops. Resolve the proxy trust and network boundary before activation. Active settings were not changed.
+- `DEPLOYMENT_MODE` defaults to `development`; unsupported values raise a startup `ValueError`. The registered production check returns no production errors outside production mode.
+- A missing `SECRET_KEY` is rejected while settings load because it is required. In production mode the check also rejects keys shorter than 50 characters or using Django's insecure prefix. Focused tests verify that configuration errors identify settings without echoing synthetic secret or SMTP-password values.
+- Production checks reject `DEBUG=True`, empty/wildcard/local-only `ALLOWED_HOSTS`, malformed or non-HTTPS CSRF origins, and CSRF origins whose host is absent from `ALLOWED_HOSTS`. The custom check permits an empty CSRF origin list; confirm whether cross-origin form submissions require explicit origins for the final domain.
+- The database check verifies that the configured backend is PostgreSQL; it does not connect to PostgreSQL or validate credentials, TLS, or availability. The SMTP check requires host, username, and password but does not connect or validate delivery/TLS. These checks must not be treated as service readiness checks.
+- Production requires `ENABLE_HTTPS=True`. It drives Django SSL redirects and secure session/CSRF cookies when `DEBUG=False`; HSTS remains zero by default, with subdomain inclusion and preload off. These settings are incompatible with TLS-terminating Nginx until the proxy-trust issue below is resolved.
+- `SECURE_PROXY_SSL_HEADER` is unset while production Compose forces `ENABLE_HTTPS=True`. Behind TLS-terminating Nginx, Django can see the request as HTTP and redirect repeatedly. Resolve the proxy trust and network boundary before activation. Active settings were not changed.
 - Compose assigns Nginx the static proxy-network address `172.20.0.10`, and Nginx overwrites `Host`, forwarded protocol, and client IP headers. Django currently has no trusted proxy header configured; `SECURE_PROXY_SSL_HEADER` is unset, and it is not an IP allowlist. Check the subnet against host networks before deployment.
 - TLS certificate paths and hostnames are placeholders. The template is not deployable as supplied. Obtain and validate a certificate, review renewal, then validate Nginx before activation. Keep public SEO indexing disabled.
 
