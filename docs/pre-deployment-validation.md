@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `fc0ba83ee18afbcfcb94931d8aee6bd0e803bca2` (`docs: scope verified status claims`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `cd3d4b28d883af1d320532716cc5db47ad43df8e` (`docs: clarify syntax validation limits`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -155,6 +155,15 @@ Several blockers require application or deployment-template changes. They are do
 - Before provisioning, approve the provider, region, plan, total monthly cost, storage/capacity headroom, access owners, and recovery path. Select an independent encrypted backup destination and confirm its access and cost. A single VPS is one failure domain and does not provide high availability.
 - Before allowing public traffic, prepare a reviewed host firewall and SSH recovery policy: allow only the chosen SSH port and web ports 80/443, restrict SSH sources where feasible, and block public PostgreSQL, Redis, Gunicorn, and Docker API access. Apply and verify those controls only after a separately approved provisioning step.
 - After domain/DNS and host networking are confirmed, obtain a real certificate through a reviewed challenge/bootstrap process, configure renewal, replace all placeholders, and validate the exact pinned Nginx image/config. Keep the existing production templates inactive until the outstanding security blockers are resolved and deployment is explicitly approved.
+
+## Domain and hosting restrictions
+
+- [DEFERRED] This phase does not authorize domain registration or purchase, hosting-account creation, VPS purchase/provisioning, provider trials, or paid add-ons.
+- [DEFERRED] Do not configure or change public DNS, publish an IP address, request or install a production certificate, expose the site publicly, or deploy production services.
+- [DEFERRED] Do not create production credentials or place them in the repository, local `.env`, command history, rendered Compose output, or logs. The user's `.env` access restriction remains in force.
+- [DEFERRED] Do not enable public indexing, set a real production SEO origin, or submit sitemaps. Keep SEO indexing disabled until its separate approval gate is satisfied.
+- [PROPOSED] The $10–20 USD monthly budget and Hetzner preference are planning constraints only. Recheck provider availability, eligibility, taxes, region, IPv4, backups, domain, email, and total checkout cost immediately before any decision. If the full cost exceeds budget, stop for a new decision; do not silently omit independent backups or weaken security to fit the estimate.
+- Any future action outside these local restrictions requires its applicable `[PENDING APPROVAL]` gate and explicit authorization before execution. No provider or registrar was contacted for this update.
 
 ## Exact future deployment approval gates
 
