@@ -13,7 +13,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `ae9e95ffacfec647a12b3426ddae49fbeaa4f406` (`docs: clarify verified validation results`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `36b4aa1a5b8d60f6bbe7b7787d02d5f191b1379c` (`docs: list unverified deployment assumptions`).
 - The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
@@ -127,6 +127,20 @@ The following items have not been established by local template parsing or the i
 - Monitoring, alert ownership, host firewall/SSH policy, resource headroom under real traffic, operational rollback, and application behavior during container replacement or Docker DNS changes.
 
 No production deployment, real service connection, certificate validation, data backup/restore, or public SEO activation has verified these points. Resolve and evidence each applicable item before production approval.
+
+## Outstanding security blockers
+
+Do not expose the proposed production stack publicly until these are resolved, reviewed, and validated:
+
+- **HTTPS/proxy trust:** Compose enables `ENABLE_HTTPS=True`, but Django leaves `SECURE_PROXY_SSL_HEADER=None`; TLS-terminated requests can loop on redirects. The web container also shares the internal data network with PostgreSQL and Redis peers, so a proxy header cannot safely be trusted until direct Gunicorn access is restricted and that boundary is proven.
+- **Database privilege:** the application database URL uses the PostgreSQL initialization role, which is a superuser in a fresh official-image database. Provision a separate least-privilege runtime role and keep migration/backup privileges separate.
+- **Host redirect:** the HTTP Nginx redirect reflects `$host`; unknown Host values can influence the redirect destination. Use a fixed, confirmed canonical host or an explicit rejecting default server.
+- **Private attachment URL behavior:** storage generates a `/media/` URL for a synthetic private path. The separate volume prevents Nginx from directly reading the private volume, but the failed regression test leaves URL generation unresolved. Obtain approval for the storage implementation change, then pass the regression test before launch.
+- **Secrets and cache access:** Redis password is exposed through container environment and process arguments, and Redis uses its default ACL user. Reduce secret exposure and review Redis access policy before handling production credentials. Never publish rendered Compose output.
+- **TLS template and images:** the Nginx config contains placeholder domain/certificate paths and combines TLS with an already enabled redirect, so it is not an HTTP bootstrap config and cannot start without valid certificate files. The exact pinned Nginx image has not passed syntax testing; use reviewed immutable image digests and validate the final config/certificate before activation.
+- **Operations and recovery:** host firewall/SSH policy, resource limits, effective persistent-volume permissions, encrypted off-server backup implementation, key recovery, retention/alerts, and a successful isolated database-plus-upload restore are not in place or verified. Treat their absence as launch blockers for any production data.
+
+Several blockers require application or deployment-template changes. They are documented only; no active Django settings, production Compose/Nginx template, credentials, local services, or data were changed to address them in this report update.
 
 ## Environment and data handling note
 
