@@ -4,7 +4,7 @@
 
 **Verification date:** 2026-10-28 (local validation recorded below).
 
-**Status labels:** `[VERIFIED]` successful check supported by evidence; `[VERIFIED WITH WARNINGS]` completed with disclosed warnings; `[PROPOSED]` a design or target not approved or implemented; `[DEFERRED]` intentionally left to a later phase; `[FAIL]` check failed; `[BLOCKED]` cannot proceed until a defect or prerequisite is resolved; `[NOT RUN]` intentionally not performed; `[UNVERIFIED]` not established by available evidence; `[NOT IN PLACE]` absent; `[UNCOMMITTED]` present only as an unstaged/uncommitted change; `[PENDING APPROVAL]` awaits explicit approval.
+**Status labels:** `[VERIFIED]` an exact check result or fact was tested or directly confirmed within the stated scope; it does not imply broader production control effectiveness. `[VERIFIED WITH WARNINGS]` a check completed with disclosed warnings. `[PROPOSED]` a design or target not approved or implemented; `[DEFERRED]` intentionally left to a later phase; `[FAIL]` a check failed; `[BLOCKED]` cannot proceed until a defect or prerequisite is resolved; `[NOT RUN]` intentionally not performed; `[UNVERIFIED]` not established by available evidence; `[NOT IN PLACE]` absent; `[UNCOMMITTED]` present only as an unstaged/uncommitted change; `[PENDING APPROVAL]` awaits explicit approval.
 
 ## Initial repository state
 
@@ -15,7 +15,7 @@
 
 ## Current Git baseline
 
-- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `e05383fa05dd9e62544a5dc031dd1e2c89a93e38` (`docs: label proposed deployment targets`).
+- Verified on 2026-10-29 before this report update: branch `feature/codeventra-ui`, commit `4459633f1b39173769c180f5b4b4f48b2112cdda` (`docs: mark out-of-phase tasks deferred`).
 - [UNCOMMITTED] The working tree is not clean: `contact/tests.py` has an unstaged private-storage regression test that currently fails pending an approved storage implementation change. It was not included in the report commit.
 
 ## Production Compose findings
