@@ -1,154 +1,129 @@
-
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}About Codeventra Labs | Our Approach{% endblock %}
+{% block title %}About Codeventra Labs | Engineering Ideas Into Reality{% endblock %}
 
 {% block meta_description %}
-Learn about Codeventra Labs and our approach to international software development, web applications, AI solutions, and automation.
+Meet Codeventra Labs: a software development organization building useful digital products through thoughtful design and practical engineering.
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
 {% endblock %}
 
 {% block content %}
-
-<section class="page-hero">
-    <div class="container page-hero-content">
-        <span class="eyebrow">About Codeventra Labs</span>
-
-        <h1>
-            Good technology starts with
-            <span class="text-gradient">understanding the problem.</span>
-        </h1>
-
-        <p>
-            Our focus is on creating useful digital experiences that
-            combine clear design, practical engineering, and your goals.
-        </p>
-    </div>
-</section>
-
-<section class="section">
-    <div class="container about-intro">
-        <div class="about-copy">
-            <span class="eyebrow">Our purpose</span>
-            <h2>Technology should solve real problems.</h2>
-
-            <p>
-                Codeventra Labs builds digital solutions such as websites,
-                web applications, e-commerce experiences, custom software,
-                and AI-powered tools.
-            </p>
-
-            <p>
-                Each project should begin with understanding what needs
-                to be achieved, who will use the solution, and what
-                constraints matter. The technology should serve those
-                requirements rather than make the project unnecessarily
-                complicated.
-            </p>
-
-            <p>
-                Our approach emphasizes usability, maintainability,
-                responsive design, and thoughtful implementation.
-            </p>
+<section class="about-hero" aria-labelledby="about-title">
+    <div class="container about-hero-layout">
+        <div class="about-hero-copy">
+            <span class="eyebrow">About Codeventra Labs</span>
+            <h1 id="about-title">Engineering ideas into <span class="text-gradient">useful reality.</span></h1>
+            <p>We turn ideas and challenges into practical digital solutions, bringing together clear design and considered software engineering.</p>
+            <div class="about-hero-actions">
+                <a class="button button-primary" href="{% url 'contact:contact' %}">Discuss a project <span aria-hidden="true">&#8599;</span></a>
+                <a class="button button-secondary" href="{% url 'services' %}">Explore our services</a>
+            </div>
         </div>
-
-        <div class="about-principles card card-padding">
-            <span class="eyebrow">Our principles</span>
-
-            <div class="principle-item">
-                <span class="principle-number">01</span>
-                <div>
-                    <h3>Understand first</h3>
-                    <p>Clarify the requirements before choosing a solution.</p>
-                </div>
-            </div>
-
-            <div class="principle-item">
-                <span class="principle-number">02</span>
-                <div>
-                    <h3>Build with purpose</h3>
-                    <p>Choose tools and features that serve a real need.</p>
-                </div>
-            </div>
-
-            <div class="principle-item">
-                <span class="principle-number">03</span>
-                <div>
-                    <h3>Test and improve</h3>
-                    <p>Check the result and identify opportunities to improve.</p>
-                </div>
-            </div>
-
-            <div class="principle-item">
-                <span class="principle-number">04</span>
-                <div>
-                    <h3>Think long term</h3>
-                    <p>Value security, accessibility, and maintainability.</p>
-                </div>
+        <div class="about-hero-art" aria-hidden="true">
+            <div class="about-art-orbit about-art-orbit-one"></div>
+            <div class="about-art-orbit about-art-orbit-two"></div>
+            <div class="about-art-card">
+                <span class="about-art-kicker">CODEVENTRA / PRINCIPLE 01</span>
+                <span class="about-art-rule"></span>
+                <strong>Understand<br>the problem.</strong>
+                <span class="about-art-caption">Then shape the right solution.</span>
+                <span class="about-art-index">01 <i></i> 06</span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="section section-process">
+<section class="section about-who" aria-labelledby="about-who-title">
+    <div class="container about-who-layout">
+        <div class="about-section-intro">
+            <span class="eyebrow">Who we are</span>
+            <h2 id="about-who-title">Technology should <span class="text-gradient">solve real problems.</span></h2>
+        </div>
+        <div class="about-who-copy">
+            <p>Codeventra Labs is a software development organization focused on transforming ideas into practical digital solutions. Our work spans websites, web applications, e-commerce experiences, custom software, AI tools, and automation.</p>
+            <p>We start by understanding what needs to be achieved, who will use the solution, and which constraints matter. From there, the technology and design can serve the need without adding needless complexity.</p>
+            <p>We value useful outcomes, thoughtful implementation, and clear communication throughout the work.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section about-purpose" aria-label="Our mission and vision">
+    <div class="container about-purpose-grid">
+        <article class="about-purpose-card about-purpose-mission">
+            <span class="about-card-index">01 / OUR MISSION</span>
+            <h2>Build software with care and purpose.</h2>
+            <p>We aim to build useful, maintainable, secure, and thoughtfully designed software solutions that address real needs.</p>
+            <span class="about-card-mark" aria-hidden="true">M</span>
+        </article>
+        <article class="about-purpose-card about-purpose-vision">
+            <span class="about-card-index">02 / OUR VISION</span>
+            <h2>Make meaningful ideas possible.</h2>
+            <p>We want to help organizations turn ideas and challenges into meaningful digital products that support their goals.</p>
+            <span class="about-card-mark" aria-hidden="true">V</span>
+        </article>
+    </div>
+</section>
+
+<section class="section about-services" aria-labelledby="about-services-title">
     <div class="container">
-        <div class="section-heading">
-            <span class="eyebrow">Our approach</span>
-            <h2>From requirements to a <span class="text-gradient">working solution.</span></h2>
-            <p>
-                A clear process helps make expectations, decisions,
-                and next steps easier to understand.
-            </p>
+        <div class="about-section-heading">
+            <div><span class="eyebrow">What we do</span><h2 id="about-services-title">Digital solutions for <span class="text-gradient">real work.</span></h2></div>
+            <p>Our services cover the products and improvements that help people do things online, shaped around each project’s needs.</p>
         </div>
-
-        <div class="grid grid-3">
-            <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">⌕</div>
-                <h3>Understand</h3>
-                <p>
-                    Discuss the problem, intended users, requirements,
-                    priorities, and constraints.
-                </p>
-            </article>
-
-            <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">◇</div>
-                <h3>Design & develop</h3>
-                <p>
-                    Create a suitable structure and build the solution
-                    with appropriate technologies.
-                </p>
-            </article>
-
-            <article class="feature-card">
-                <div class="feature-icon" aria-hidden="true">✓</div>
-                <h3>Review & refine</h3>
-                <p>
-                    Test the implementation, address issues, and prepare
-                    the work for its intended use.
-                </p>
-            </article>
+        <div class="about-service-grid">
+            <article class="about-service-card"><span>01</span><h3>Websites &amp; online tools</h3><p>Responsive websites and useful browser-based tools for your audience and team.</p></article>
+            <article class="about-service-card"><span>02</span><h3>Online stores</h3><p>E-commerce experiences that help customers browse products and place orders.</p></article>
+            <article class="about-service-card"><span>03</span><h3>Custom applications</h3><p>Purpose-built online applications, dashboards, and workflow features.</p></article>
+            <article class="about-service-card"><span>04</span><h3>AI tools &amp; features</h3><p>Practical AI capabilities designed around a defined problem or workflow.</p></article>
+            <article class="about-service-card"><span>05</span><h3>Automation &amp; connections</h3><p>Connections between online services and automation for repeatable steps.</p></article>
+            <article class="about-service-card"><span>06</span><h3>Speed, search &amp; support</h3><p>Improvements to performance, search visibility, accessibility, and upkeep.</p></article>
         </div>
+        <a class="about-inline-link" href="{% url 'services' %}">See all services <span aria-hidden="true">&#8594;</span></a>
     </div>
 </section>
 
-<section class="section">
+<section class="section about-process" aria-labelledby="about-process-title">
     <div class="container">
-        <div class="cta-panel">
-            <div>
-                <span class="eyebrow">Work with us</span>
-                <h2>Have a challenge worth solving?</h2>
-                <p>
-                    Tell us what you need and let's discuss the possibilities.
-                </p>
-            </div>
+        <div class="section-heading about-process-heading">
+            <span class="eyebrow">Our development approach</span>
+            <h2 id="about-process-title">A considered path from <span class="text-gradient">idea to improvement.</span></h2>
+            <p>This is the working approach we aim to follow, adapting the detail to the project and its needs.</p>
+        </div>
+        <ol class="about-process-grid">
+            <li><span class="about-step-number">01</span><h3>Discover</h3><p>Understand needs, users, objectives, and constraints.</p></li>
+            <li><span class="about-step-number">02</span><h3>Plan</h3><p>Define requirements, scope, priorities, and technical direction.</p></li>
+            <li><span class="about-step-number">03</span><h3>Design</h3><p>Shape an accessible experience around the people using it.</p></li>
+            <li><span class="about-step-number">04</span><h3>Build</h3><p>Implement the solution and connect its required parts.</p></li>
+            <li><span class="about-step-number">05</span><h3>Validate</h3><p>Review functionality, security considerations, and usability.</p></li>
+            <li><span class="about-step-number">06</span><h3>Improve</h3><p>Refine the work in response to feedback and project needs.</p></li>
+        </ol>
+    </div>
+</section>
 
-            <div class="cta-actions">
-                <a class="button button-primary" href="/contact/">
-                    Contact Codeventra Labs <span aria-hidden="true">↗</span>
-                </a>
-            </div>
+<section class="section about-principles" aria-labelledby="about-principles-title">
+    <div class="container about-principles-layout">
+        <div class="about-principles-intro"><span class="eyebrow">Engineering principles</span><h2 id="about-principles-title">Good decisions, <span class="text-gradient">built in.</span></h2><p>The details matter. These principles guide how we think about a solution from its first requirements to its ongoing use.</p></div>
+        <div class="about-principle-list">
+            <article><span aria-hidden="true">01</span><div><h3>Security &amp; privacy awareness</h3><p>Consider sensitive data and security needs as part of the design and implementation.</p></div></article>
+            <article><span aria-hidden="true">02</span><div><h3>Maintainable architecture</h3><p>Favor clear structures that can be understood and changed over time.</p></div></article>
+            <article><span aria-hidden="true">03</span><div><h3>Performance &amp; reliability</h3><p>Account for responsiveness and dependable behavior in everyday use.</p></div></article>
+            <article><span aria-hidden="true">04</span><div><h3>Accessible design</h3><p>Make interfaces easier to navigate and use across abilities and devices.</p></div></article>
+            <article><span aria-hidden="true">05</span><div><h3>Clear communication</h3><p>Explain decisions, trade-offs, and next steps in plain language.</p></div></article>
+            <article><span aria-hidden="true">06</span><div><h3>Practical problem-solving</h3><p>Choose an approach that fits the need, constraints, and intended outcome.</p></div></article>
         </div>
     </div>
 </section>
 
+<section class="section about-final-cta" aria-labelledby="about-cta-title">
+    <div class="container">
+        <div class="cta-panel about-cta-panel">
+            <div><span class="eyebrow">Let’s make the next step clear</span><h2 id="about-cta-title">Have an idea or challenge to explore?</h2><p>Take a look at our work, or tell us what you’re looking to build.</p></div>
+            <div class="cta-actions"><a class="button button-secondary" href="{% url 'projects:list' %}">Explore the portfolio</a><a class="button button-primary" href="{% url 'contact:contact' %}">Discuss a project <span aria-hidden="true">&#8599;</span></a></div>
+        </div>
+    </div>
+</section>
 {% endblock %}
