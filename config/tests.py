@@ -198,6 +198,21 @@ class DeploymentConfigurationTests(SimpleTestCase):
                 errors = self.production_errors(**{setting: ""})
                 self.assert_setting_error(errors, setting)
 
+    def test_production_errors_name_settings_without_exposing_values(self):
+        secret_key_marker = "synthetic-secret-marker"
+        smtp_password_marker = "synthetic-smtp-password-marker"
+        errors = self.production_errors(
+            SECRET_KEY=secret_key_marker,
+            EMAIL_HOST="",
+            EMAIL_HOST_PASSWORD=smtp_password_marker,
+        )
+
+        rendered_errors = "\n".join(str(error) for error in errors)
+        self.assert_setting_error(errors, "SECRET_KEY")
+        self.assert_setting_error(errors, "EMAIL_HOST")
+        self.assertNotIn(secret_key_marker, rendered_errors)
+        self.assertNotIn(smtp_password_marker, rendered_errors)
+
     def test_https_must_be_explicitly_enabled_in_production(self):
         errors = self.production_errors(ENABLE_HTTPS=False)
         self.assert_setting_error(errors, "ENABLE_HTTPS")
