@@ -34,11 +34,16 @@ RUN DJANGO_SETTINGS_MODULE=config.settings \
     python manage.py collectstatic --noinput
 
 # Create a non-root user and assign directory permissions
-RUN useradd --create-home --uid 10001 appuser \
+RUN groupadd --gid 10002 proxytransport \
+    && useradd --create-home --uid 10001 appuser \
     && chown -R appuser:appuser \
         /app/staticfiles \
         /app/private_uploads \
         /app/media
+
+RUN mkdir -p /run/codeventra \
+    && chown 10001:10002 /run/codeventra \
+    && chmod 2750 /run/codeventra
 
 # Run as non-root user
 USER appuser

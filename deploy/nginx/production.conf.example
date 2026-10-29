@@ -1,7 +1,7 @@
 # Proposed template. Replace both server_name values and certificate paths only
 # after domain ownership, DNS, and certificate issuance are verified.
 upstream django_app {
-    server web:8000;
+    server unix:/run/codeventra/gunicorn.sock;
     keepalive 16;
 }
 

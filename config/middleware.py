@@ -1,6 +1,7 @@
 import ipaddress
 
 from django.conf import settings
+from django.http import HttpResponseBadRequest
 
 
 class TrustedProxyIPMiddleware:
@@ -13,6 +14,11 @@ class TrustedProxyIPMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        production = settings.DEPLOYMENT_MODE == "production"
+        socket_trusted = request.META.get("codeventra.private_socket") is True
+        if production and not socket_trusted:
+            # Fail closed before SecurityMiddleware can consume protocol headers.
+            return HttpResponseBadRequest("Untrusted application transport")
         peer_ip = request.META.get("REMOTE_ADDR", "")
         forwarded_ip = request.META.get("HTTP_X_REAL_IP", "")
 
@@ -22,7 +28,7 @@ class TrustedProxyIPMiddleware:
             [],
         )
 
-        if peer_ip in trusted_proxies and forwarded_ip:
+        if ((production and socket_trusted) or (not production and peer_ip in trusted_proxies)) and forwarded_ip:
             try:
                 # Reject forwarded IP chains.
                 if "," not in forwarded_ip:

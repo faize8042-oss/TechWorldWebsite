@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from urllib.parse import urlsplit
 import environ
@@ -21,7 +22,8 @@ env = environ.Env(
     DEBUG=(bool, False),
 )
 
-environ.Env.read_env(BASE_DIR / ".env")
+if not os.environ.get("CODEVENTRA_SKIP_DOTENV"):
+    environ.Env.read_env(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -260,7 +262,16 @@ SECURE_HSTS_PRELOAD = False
 
 # Forwarded protocol headers remain untrusted until a verified TLS proxy
 # overwrites them and direct access to Gunicorn is blocked.
-SECURE_PROXY_SSL_HEADER = None
+PRODUCTION_PROXY_TRANSPORT = env("PRODUCTION_PROXY_TRANSPORT", default="")
+if DEPLOYMENT_MODE == "production" and (
+    PRODUCTION_PROXY_TRANSPORT != "unix" or DEBUG
+):
+    raise ValueError("Production requires PRODUCTION_PROXY_TRANSPORT=unix and DEBUG=False.")
+SECURE_PROXY_SSL_HEADER = (
+    ("HTTP_X_FORWARDED_PROTO", "https")
+    if DEPLOYMENT_MODE == "production" and PRODUCTION_PROXY_TRANSPORT == "unix"
+    else None
+)
 
 
 

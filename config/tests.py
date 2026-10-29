@@ -88,6 +88,8 @@ class DeploymentConfigurationTests(SimpleTestCase):
         "EMAIL_HOST_USER": "mailer",
         "EMAIL_HOST_PASSWORD": "placeholder-only",
         "ENABLE_HTTPS": True,
+        "PRODUCTION_PROXY_TRANSPORT": "unix",
+        "SECURE_PROXY_SSL_HEADER": ("HTTP_X_FORWARDED_PROTO", "https"),
     }
 
     def production_errors(self, **overrides):
@@ -216,3 +218,75 @@ class DeploymentConfigurationTests(SimpleTestCase):
     def test_https_must_be_explicitly_enabled_in_production(self):
         errors = self.production_errors(ENABLE_HTTPS=False)
         self.assert_setting_error(errors, "ENABLE_HTTPS")
+
+
+@override_settings(DEPLOYMENT_MODE="production", PRODUCTION_PROXY_TRANSPORT="unix",
+                   SECURE_PROXY_SSL_HEADER=("HTTP_X_FORWARDED_PROTO", "https"))
+class PrivateSocketProxyTests(SimpleTestCase):
+    def test_unmarked_requests_fail_closed_even_with_empty_or_trusted_peer(self):
+        for peer in ("", "172.20.0.10", "198.51.100.10"):
+            request = RequestFactory().get("/", REMOTE_ADDR=peer,
+                HTTP_X_FORWARDED_PROTO="https", HTTP_X_REAL_IP="203.0.113.1",
+                HTTP_CODEVENTRA_PRIVATE_SOCKET="True")
+            response = TrustedProxyIPMiddleware(lambda r: HttpResponse("unexpected"))(request)
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(request.META["REMOTE_ADDR"], peer)
+
+    def test_marked_socket_validates_ip_and_recognizes_scheme(self):
+        for address, expected in (("203.0.113.25", "203.0.113.25"),
+                                  ("2001:db8::1", "2001:db8::1"),
+                                  ("invalid", ""), ("1.2.3.4, 5.6.7.8", "")):
+            request = RequestFactory().get("/", REMOTE_ADDR="",
+                HTTP_X_REAL_IP=address, HTTP_X_FORWARDED_PROTO="https")
+            request.META["codeventra.private_socket"] = True
+            response = TrustedProxyIPMiddleware(lambda r: HttpResponse(str(r.is_secure())))(request)
+            self.assertEqual(response.content, b"True")
+            self.assertEqual(request.META["REMOTE_ADDR"], expected)
+
+    def test_http_scheme_remains_insecure(self):
+        request = RequestFactory().get("/", HTTP_X_FORWARDED_PROTO="http")
+        request.META["codeventra.private_socket"] = True
+        TrustedProxyIPMiddleware(lambda r: HttpResponse())(request)
+        self.assertFalse(request.is_secure())
+
+
+class SocketConfigurationChecksTests(DeploymentConfigurationTests):
+    def test_transport_and_header_are_required(self):
+        for values in ({"PRODUCTION_PROXY_TRANSPORT": ""}, {"SECURE_PROXY_SSL_HEADER": None}):
+            self.assert_setting_error(self.production_errors(**values), "PRODUCTION_PROXY_TRANSPORT")
+
+    def test_hsts_and_indexing_remain_disabled(self):
+        self.assert_setting_error(self.production_errors(SECURE_HSTS_SECONDS=60), "HSTS_SECONDS")
+        self.assert_setting_error(self.production_errors(SEO_INDEXING_ENABLED=True), "SEO_INDEXING_ENABLED")
+
+
+class GunicornHookContractTests(SimpleTestCase):
+    """Exercise our hook with fakes; this is not Linux Gunicorn validation."""
+    def test_hook_rejects_tcp_and_marks_only_validated_socket(self):
+        import runpy
+        import socket
+        import stat
+        from pathlib import Path
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        unix_family = getattr(socket, "AF_UNIX", 999)
+        self.enterContext(patch.object(socket, "AF_UNIX", unix_family, create=True))
+        config = runpy.run_path(str(Path(settings.BASE_DIR) / "deploy/gunicorn.production.py"))
+        self.assertEqual(config["secure_scheme_headers"], {})
+        worker = SimpleNamespace(sockets=[SimpleNamespace(family=socket.AF_INET)],
+            cfg=SimpleNamespace(secure_scheme_headers={}),
+            wsgi=lambda environ, start: environ.copy())
+        directory = SimpleNamespace(st_uid=10001, st_gid=10002, st_mode=stat.S_IFDIR | 0o2750)
+        node = SimpleNamespace(st_uid=10001, st_gid=10002, st_mode=stat.S_IFSOCK | 0o660)
+        with self.settings(DEPLOYMENT_MODE="production", PRODUCTION_PROXY_TRANSPORT="unix"), \
+             patch("django.core.checks.run_checks", return_value=[]), \
+             patch("os.stat", return_value=directory):
+            with self.assertRaisesRegex(RuntimeError, "listener"):
+                config["post_worker_init"](worker)
+        worker.sockets = [SimpleNamespace(family=socket.AF_UNIX,
+            getsockname=lambda: "/run/codeventra/gunicorn.sock")]
+        with self.settings(DEPLOYMENT_MODE="production", PRODUCTION_PROXY_TRANSPORT="unix"), \
+             patch("django.core.checks.run_checks", return_value=[]), \
+             patch("os.stat", side_effect=[directory, node]):
+            config["post_worker_init"](worker)
+        self.assertIs(worker.wsgi({}, None)["codeventra.private_socket"], True)

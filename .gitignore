@@ -56,3 +56,5 @@ test_errors.txt
 
 # Runtime logs
 *.log
+# Local isolated validation evidence (retain on disk)
+/validation-results/
