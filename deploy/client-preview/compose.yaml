@@ -1,0 +1,133 @@
+{
+  "name": "codeventra-client-preview",
+  "services": {
+    "web": {
+      "read_only": true,
+      "user": "10001:10002",
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "restart": "no",
+      "pids_limit": 64,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=32m,mode=1777"
+      ],
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "5m",
+          "max-file": "2"
+        }
+      },
+      "labels": {
+        "com.codeventra.preview": "public-only-v1",
+        "com.codeventra.preview.run": "${PREVIEW_RUN_ID:?unique run ID required}"
+      },
+      "image": "${PREVIEW_APP_IMAGE:?approved local image ID required}",
+      "pull_policy": "never",
+      "network_mode": "none",
+      "environment": {
+        "DJANGO_SETTINGS_MODULE": "config.preview_settings",
+        "CODEVENTRA_SKIP_DOTENV": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "command": [
+        "gunicorn",
+        "config.preview_wsgi:application",
+        "--config",
+        "/app/preview-gunicorn.py"
+      ],
+      "volumes": [
+        "socket:/run/preview"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import socket; s=socket.socket(socket.AF_UNIX); s.settimeout(3); s.connect('/run/preview/gunicorn.sock'); s.sendall(b'GET / HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n'); f=s.makefile('rb'); line=f.readline(128); s.close(); raise SystemExit(0 if line in (b'HTTP/1.1 200 OK\\r\\n', b'HTTP/1.0 200 OK\\r\\n') else 1)"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 6
+      }
+    },
+    "ingress": {
+      "read_only": true,
+      "user": "10001:10002",
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "restart": "no",
+      "pids_limit": 64,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=32m,mode=1777"
+      ],
+      "logging": {
+        "driver": "json-file",
+        "options": {
+          "max-size": "5m",
+          "max-file": "2"
+        }
+      },
+      "labels": {
+        "com.codeventra.preview": "public-only-v1",
+        "com.codeventra.preview.run": "${PREVIEW_RUN_ID:?unique run ID required}"
+      },
+      "image": "${PREVIEW_NGINX_IMAGE:?approved local image ID required}",
+      "pull_policy": "never",
+      "entrypoint": [
+        "nginx"
+      ],
+      "command": [
+        "-c",
+        "/etc/nginx/preview.conf",
+        "-g",
+        "daemon off;"
+      ],
+      "ports": [
+        "127.0.0.1:8765:8080"
+      ],
+      "volumes": [
+        "socket:/run/preview:ro",
+        "./nginx.conf:/etc/nginx/preview.conf:ro",
+        "./proxy.conf:/etc/nginx/preview-proxy.conf:ro"
+      ],
+      "networks": [
+        "ingress"
+      ],
+      "depends_on": {
+        "web": {
+          "condition": "service_healthy"
+        }
+      }
+    }
+  },
+  "volumes": {
+    "socket": {
+      "labels": {
+        "com.codeventra.preview": "public-only-v1",
+        "com.codeventra.preview.run": "${PREVIEW_RUN_ID:?unique run ID required}"
+      }
+    }
+  },
+  "networks": {
+    "ingress": {
+      "internal": true,
+      "labels": {
+        "com.codeventra.preview": "public-only-v1",
+        "com.codeventra.preview.run": "${PREVIEW_RUN_ID:?unique run ID required}"
+      }
+    }
+  }
+}

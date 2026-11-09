@@ -17,6 +17,7 @@ __pycache__/
 
 # Private contact attachments
 private_uploads/
+private_publishing/
 
 # Generated output
 staticfiles/
@@ -28,6 +29,11 @@ htmlcov/
 # Uploaded media and database backups
 media/
 backups/
+validation-results/
+test-errors.txt
+test_errors.txt
+publishing_test_errors.txt
+*.log
 *.sql
 *.sql.gz
 *.dump

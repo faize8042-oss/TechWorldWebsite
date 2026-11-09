@@ -15,20 +15,24 @@ Docker Compose runs Django 5.2 under Gunicorn, PostgreSQL 17, Redis 7, and Nginx
 - `DEPLOYMENT_MODE` defaults to `development`; production-only system checks run when explicitly set to `production`.
 - Production checks validate secret strength, confirmed hosts, HTTPS CSRF origins, PostgreSQL, SMTP credentials, and explicit HTTPS enablement without contacting services.
 - HTTPS redirect and secure cookies remain disabled in local development. HSTS remains zero unless explicitly configured with HTTPS; subdomain and preload flags remain false.
-- Forwarded protocol headers are not trusted by Django. The proxy must overwrite them and direct untrusted access to Gunicorn must be blocked before configuring `SECURE_PROXY_SSL_HEADER`.
+- Development leaves forwarded protocol headers untrusted. C6.1 production uses the validated private Unix socket marker and exact proxy SSL tuple; Nginx must overwrite forwarded headers.
 - Runtime logs go to container stderr. Contact email failure logs include only the submission ID and exception class, not message contents or exception text.
 - `/health/` returns only `ok` with `text/plain` and `Cache-Control: no-store`. It is a liveness check and does not test database or Redis readiness.
 - SEO indexing remains disabled by default. The health endpoint is not included in the sitemap.
 
 ## Required production environment
 
-Use a deployment secret manager or protected environment configuration; do not commit `.env` or print secrets. Set:
+The production template now follows the [C6.2.1 credential isolation contract](c6-2-1-postgresql-hardening.md).
+Use its dedicated runtime JSON secret mount and administrator/migration/backup
+separation; do not pass a shared environment file to web. Runtime application
+values below belong in the allowlisted JSON, while deployment gates are explicit
+Compose environment entries. These are proposed inputs, not deployment approval. Set:
 
 - `DEPLOYMENT_MODE=production` and `DEBUG=False`.
 - `SECRET_KEY` to a unique, randomly generated secret of at least 50 characters.
 - `ALLOWED_HOSTS` to only hostnames confirmed for the deployment.
 - `CSRF_TRUSTED_ORIGINS` to the corresponding verified HTTPS origins (scheme included).
-- `DATABASE_URL` to the production PostgreSQL connection and credentials.
+- `DATABASE_URL` in runtime JSON to the dedicated `cv_runtime` PostgreSQL connection; never the initialization administrator or migration login.
 - `CONTACT_EMAIL`, `DEFAULT_FROM_EMAIL`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, and `EMAIL_HOST_PASSWORD` to verified SMTP values. Keep TLS/SSL mode consistent with the provider.
 - `ENABLE_HTTPS=True` only after HTTPS termination and forwarded request behavior are verified.
 - Keep `SEO_INDEXING_ENABLED=False` and `SEO_SITE_URL` empty until the public HTTPS origin, domain control, and launch approval are confirmed.
@@ -48,7 +52,7 @@ The production checks intentionally fail until production values are supplied. D
 Use this order for production HTTPS; do not skip gates:
 
 1. Confirm domain ownership, canonical hostnames, DNS, host firewall, and non-conflicting Docker networks.
-2. Verify the Gunicorn trust boundary. Gunicorn has no published host port in the template, but web also shares the data network with PostgreSQL and Redis; identify/restrict every peer that can reach it before trusting forwarded protocol headers.
+2. Verify the C6.1 Gunicorn Unix socket boundary: only web and Nginx mount the socket, database/Redis have no socket mount, and Gunicorn has no TCP listener. Verify socket ownership and proxy marker checks.
 3. Obtain a valid certificate through the selected DNS challenge or a separately reviewed HTTP-only bootstrap configuration. The production Nginx template itself requires certificate files and redirects HTTP to HTTPS, so it cannot bootstrap TLS as supplied.
 4. Configure and rehearse certificate renewal, replace hostname/certificate placeholders, and configure unknown-host rejection or a fixed canonical redirect target.
 5. Validate the finalized Nginx config with the exact pinned image and real deployment paths. Confirm Nginx overwrites `X-Forwarded-Proto` and client-IP headers from the connection.
@@ -57,7 +61,7 @@ Use this order for production HTTPS; do not skip gates:
 8. Only after that test passes, enable `ENABLE_HTTPS=True` and verify HTTPS requests, HTTP-to-HTTPS redirects, secure cookies, CSRF behavior, and unknown-host rejection. The current production Compose template hard-codes this setting to `True`, so do not start it until all earlier gates pass or a reviewed staging override has been used.
 9. Add HSTS gradually after stable HTTPS. Keep `includeSubDomains` and `preload` off until every subdomain and policy requirement has been separately reviewed.
 
-Never trust client-supplied forwarded headers as proof of TLS. Django currently leaves `SECURE_PROXY_SSL_HEADER=None`; production Compose currently forces `ENABLE_HTTPS=True`. This mismatch can cause redirect loops and must be resolved before activation. No certificate, DNS, or proxy changes are included in this preparation phase.
+Never trust client-supplied forwarded headers as proof of TLS. C6.1 production enables the proxy SSL tuple only with the Unix transport and marker boundary; development keeps it None. Production Compose forces ENABLE_HTTPS=True, so verify the complete C6.1 boundary and TLS before activation. No certificate or DNS changes are included in this preparation phase.
 
 ## PostgreSQL backup and restore rehearsal
 
@@ -80,7 +84,7 @@ Restrict backup access, encrypt in transit and at rest, and define retention bas
 
 The example run ID is a placeholder; generate a unique UTC value for each run. Write only to access-controlled encrypted storage. The new run directory prevents a repeated identifier from silently overwriting an earlier archive, and the final rename marks completion only after the dump and archive listing succeed. Record and protect a checksum separately from the archive; monitor failures and alert an owner. The storage provider, encryption mechanism, key custody/recovery, retention enforcement, and alerting are not selected or implemented.
 
-The command uses `--no-owner --no-acl`; `pg_dump` also omits cluster-wide roles and tablespaces. Before restore, recreate the required database, least-privilege application/migration roles, ownership, and grants from reviewed provisioning instructions. Keep role passwords in secret management, not in backup scripts or SQL exports. The current template also uses the PostgreSQL initialization superuser for the application URL; replace that arrangement with a dedicated runtime role before launch.
+The command uses `--no-owner --no-acl`; `pg_dump` also omits cluster-wide roles and tablespaces. Before restore, recreate the required database, least-privilege application/migration roles, ownership, and grants from reviewed provisioning instructions. Keep role passwords in secret management, not in backup scripts or SQL exports. The C6.2.1 production proposal separates initialization, ownership, migration, runtime and backup roles; actual database privileges and existing ownership adoption remain unvalidated. Follow its scoped backup and restore limitations.
 
 For a rehearsal, provision an isolated, disposable PostgreSQL instance with no production network route and a separate database name. Restore the candidate dump there using a dedicated rehearsal credential, run schema/application smoke checks, confirm expected record counts without exporting personal data, then securely delete the isolated instance and its files. Restore the paired private-upload backup to an isolated storage target too; confirm files referenced by restored records exist and compare a protected file manifest/checksum. Coordinate the database snapshot and upload snapshot (or pause writes) and record them as one recovery point so records do not refer to missing files. Never point restore commands at production or an existing live database. This phase performs no backup or restore.
 

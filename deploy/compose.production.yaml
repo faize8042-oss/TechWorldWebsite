@@ -1,16 +1,18 @@
-# Proposed production topology. This file is intentionally separate from compose.yaml.
-# Supply APP_IMAGE as an immutable registry digest and PRODUCTION_ENV_FILE as a
-# protected host-side env file before any operator considers activation.
-# DATABASE_URL is supplied independently and must use a dedicated least-privilege
-# runtime role, not the PostgreSQL initialization role in POSTGRES_USER.
+# Repository-only production proposal; see docs/c6-2-1-postgresql-hardening.md.
+# Interpolation inputs contain paths and public metadata only, never secrets.
 services:
   db:
+    mem_limit: 1g
+    cpus: 1.0
+    pids_limit: 256
     image: postgres:17.6-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in the protected environment file}
-      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in the protected environment file}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in the protected environment file}
+      POSTGRES_DB: codeventra
+      POSTGRES_USER: cv_init
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_admin_password
+    secrets:
+      - postgres_admin_password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -25,18 +27,19 @@ services:
       - no-new-privileges:true
 
   redis:
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 64
     image: redis:7.4.2-alpine
     restart: unless-stopped
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD in the protected environment file}
-    command:
-      - sh
-      - -ec
-      - exec redis-server --save '' --appendonly no --maxmemory 128mb --maxmemory-policy allkeys-lru --requirepass "$${REDIS_PASSWORD}"
+    secrets:
+      - redis_password
+      - redis_config
+    command: ["redis-server", "/run/secrets/redis_config"]
     networks:
       - data
     healthcheck:
-      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -q PONG"]
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$(cat /run/secrets/redis_password)\" redis-cli ping | grep -q PONG"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -44,15 +47,18 @@ services:
       - no-new-privileges:true
 
   web:
+    mem_limit: 768m
+    cpus: 1.0
+    pids_limit: 256
     image: ${APP_IMAGE:?set APP_IMAGE to an approved immutable image digest}
     restart: unless-stopped
-    env_file:
-      - ${PRODUCTION_ENV_FILE:-/etc/codeventra/production.env}
+    secrets:
+      - django_runtime
     environment:
       DEPLOYMENT_MODE: production
       DEBUG: "False"
-      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in the protected environment file}
-      REDIS_URL: ${REDIS_URL:?set authenticated REDIS_URL in the protected environment file}
+      CODEVENTRA_SKIP_DOTENV: "1"
+      PRODUCTION_RUNTIME_FILE: /run/secrets/django_runtime
       ENABLE_HTTPS: "True"
       SEO_INDEXING_ENABLED: "False"
       PRODUCTION_PROXY_TRANSPORT: unix
@@ -66,6 +72,7 @@ services:
       - public_media:/app/media
     networks:
       - data
+      - mail_egress
     depends_on:
       db:
         condition: service_healthy
@@ -77,7 +84,40 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  # Explicit operator job only; never starts with the default production stack.
+  migrate:
+    profiles: [operator]
+    image: ${APP_IMAGE:?set APP_IMAGE to an approved immutable image digest}
+    restart: "no"
+    user: "10001:10002"
+    mem_limit: 768m
+    cpus: 1.0
+    pids_limit: 256
+    environment:
+      DEPLOYMENT_MODE: production
+      DEBUG: "False"
+      CODEVENTRA_SKIP_DOTENV: "1"
+      PRODUCTION_RUNTIME_FILE: /run/secrets/django_runtime
+      ENABLE_HTTPS: "True"
+      SEO_INDEXING_ENABLED: "False"
+      PRODUCTION_PROXY_TRANSPORT: unix
+      HSTS_SECONDS: "0"
+    secrets:
+      - django_runtime
+      - django_migration
+    command: ["python", "manage.py", "migrate", "--settings=config.migration_settings", "--plan", "--skip-checks"]
+    networks: [data]
+    read_only: true
+    cap_drop: [ALL]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+
   nginx:
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 128
     image: ${NGINX_IMAGE:?set NGINX_IMAGE to the approved custom Nginx image digest}
     restart: unless-stopped
     ports:
@@ -111,3 +151,18 @@ networks:
     internal: true
   proxy:
     driver: bridge
+  # Outbound SMTP access; no published web port. Database/Redis stay internal.
+  mail_egress:
+    driver: bridge
+
+secrets:
+  postgres_admin_password:
+    file: ${POSTGRES_ADMIN_PASSWORD_FILE:?set protected administrator password file path}
+  django_runtime:
+    file: ${DJANGO_RUNTIME_SECRET_FILE:?set protected runtime JSON file path}
+  redis_password:
+    file: ${REDIS_PASSWORD_FILE:?set protected Redis password file path}
+  redis_config:
+    file: ${REDIS_CONFIG_FILE:?set protected Redis configuration file path}
+  django_migration:
+    file: ${DJANGO_MIGRATION_SECRET_FILE:?set protected migration JSON file path}

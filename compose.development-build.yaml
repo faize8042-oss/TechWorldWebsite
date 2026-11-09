@@ -1,0 +1,34 @@
+# Opt-in override for compose.yaml only; never use with production Compose.
+# Run from the repository root, retaining the existing Compose project name.
+services:
+  web:
+    image: techworld-django:development-publishing
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DEPLOYMENT_MODE: development
+      CODEVENTRA_SKIP_DOTENV: "1"
+    volumes:
+      - private_publishing:/app/private_publishing
+    depends_on:
+      publishing-storage-init:
+        condition: service_completed_successfully
+
+  # Uses the already-built development image; no application settings or secrets.
+  # Only the volume root is changed; existing image files are never removed.
+  publishing-storage-init:
+    image: techworld-django:development-publishing
+    pull_policy: never
+    user: "0:0"
+    restart: "no"
+    network_mode: none
+    entrypoint: ["python", "-c"]
+    command:
+      - "import os; p='/app/private_publishing'; os.makedirs(p, exist_ok=True); os.chown(p, 10001, 10001); os.chmod(p, 0o700)"
+    volumes:
+      - private_publishing:/app/private_publishing
+
+volumes:
+  private_publishing:

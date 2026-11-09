@@ -16,14 +16,18 @@ def seo_context(request):
             {
                 "@context": "https://schema.org",
                 "@type": "Organization",
-                "name": "Codeventra Labs",
+                "@id": settings.SEO_SITE_URL + '/#organization',
+                "name": "TechBullion Hub",
                 "slogan": "Engineering Ideas Into Reality.",
                 "url": settings.SEO_SITE_URL,
+                "email": "faize8042@gmail.com",
+                "address": {"@type": "PostalAddress", "addressLocality": "Lahore", "addressCountry": "PK"},
             },
             {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "name": "Codeventra Labs",
+                "@id": settings.SEO_SITE_URL + '/#website',
+                "name": "TechBullion Hub",
                 "url": settings.SEO_SITE_URL,
             },
         ]

@@ -1,0 +1,13 @@
+.demo-shell {max-width:1050px;overflow-wrap:anywhere}
+.demo-shell h1 {font-size:clamp(2rem,5vw,3.8rem);line-height:1.15;margin:1rem 0}
+.demo-lead {font-size:1.15rem;max-width:70ch}
+.demo-context {display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin:2.5rem 0}
+.demo-workspace {margin:2rem 0}
+.demo-workspace>p,.demo-limit p {margin:1rem 0;line-height:1.7}
+.demo-form {display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin:1.5rem 0;align-items:end}
+.demo-form label {display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.demo-form input,.demo-form select {width:100%;min-width:0;padding:.8rem;border:1px solid #64748b;border-radius:.6rem;background:var(--color-bg);color:var(--color-text);font:inherit}
+.demo-result {padding:1.2rem;border:1px solid #64748b;border-radius:.6rem;line-height:1.7;margin:1.2rem 0;white-space:pre-line}
+.demo-records {padding-left:1.5rem;margin:1rem 0}.demo-records li {margin:.6rem 0}
+.demo-limit {margin:2rem 0}
+@media(max-width:640px){.demo-context,.demo-form{grid-template-columns:1fr}.demo-workspace{padding:1.1rem}}

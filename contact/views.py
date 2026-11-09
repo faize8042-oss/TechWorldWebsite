@@ -34,12 +34,12 @@ def contact(request):
             submission = form.save()
 
             subject = (
-                f"New Codeventra Labs enquiry: "
+                f"New TechBullion Hub enquiry: "
                 f"{submission.get_project_type_display()}"
             )
 
             body = (
-                "A new contact request was submitted on Codeventra Labs.\n\n"
+                "A new contact request was submitted on TechBullion Hub.\n\n"
                 f"Name: {submission.name}\n"
                 f"Email: {submission.email}\n"
                 f"Project type: {submission.get_project_type_display()}\n"

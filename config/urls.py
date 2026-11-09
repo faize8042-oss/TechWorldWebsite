@@ -20,6 +20,8 @@ urlpatterns = [
     path("privacy/", views.privacy, name="privacy"),
     path("terms/", views.terms, name="terms"),
 
+    path("blog/", include("blog.urls")),
+    path("news/", include("news.urls")),
     path("projects/", include("projects.urls")),
     path("contact/", include("contact.urls")),
 ]

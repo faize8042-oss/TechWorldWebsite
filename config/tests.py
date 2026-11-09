@@ -82,8 +82,13 @@ class DeploymentConfigurationTests(SimpleTestCase):
         "ALLOWED_HOSTS": ["site.example"],
         "CSRF_TRUSTED_ORIGINS": ["https://site.example"],
         "DATABASES": {
-            "default": {"ENGINE": "django.db.backends.postgresql"}
+            "default": {"ENGINE": "django.db.backends.postgresql",
+                        "USER": "cv_runtime", "PASSWORD": "synthetic-only",
+                        "HOST": "db", "NAME": "codeventra",
+                        "OPTIONS": {"options": "-c search_path=public"}}
         },
+        "POSTGRES_INITIALIZATION_USER": "cv_init",
+        "PRODUCTION_CREDENTIAL_CONTRACT": "runtime-secret-v1",
         "EMAIL_HOST": "smtp.example",
         "EMAIL_HOST_USER": "mailer",
         "EMAIL_HOST_PASSWORD": "placeholder-only",

@@ -63,6 +63,14 @@ def check_production_configuration(app_configs, **kwargs):
     if not settings.DATABASES["default"]["ENGINE"].endswith("postgresql"):
         error("Production must use PostgreSQL.", "DATABASE_URL")
 
+    from config.production_database import runtime_database_errors
+    for message in runtime_database_errors(
+        settings.DATABASES["default"],
+        getattr(settings, "POSTGRES_INITIALIZATION_USER", ""),
+        getattr(settings, "PRODUCTION_CREDENTIAL_CONTRACT", ""),
+    ):
+        error(message, "DATABASE_URL / PRODUCTION_CREDENTIAL_CONTRACT")
+
     if not settings.EMAIL_HOST or not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
         error(
             "SMTP host, username, and password are required in production.",

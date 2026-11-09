@@ -5,21 +5,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
 
     <meta name="theme-color" content="#0a0d19">
-    <meta name="robots" content="{% block robots %}{% if seo_indexing_enabled %}index, follow{% else %}noindex, nofollow{% endif %}{% endblock %}">
-    <meta name="description" content="{% block meta_description %}Codeventra Labs builds web applications, custom software, AI solutions, and automation for businesses worldwide.{% endblock %}">
+    <meta name="robots" content="{% block robots %}{% if seo_indexing_enabled %}index, follow, max-image-preview:large{% else %}noindex, nofollow{% endif %}{% endblock %}">
+    <meta name="description" content="{% block meta_description %}TechBullion Hub designs websites, web applications, custom software, and automation around your business needs.{% endblock %}">
 
-    <title>{% block title %}Codeventra Labs | Software Development{% endblock %}</title>
+    <title>{% block title %}TechBullion Hub | Software Development{% endblock %}</title>
     {% block canonical_link %}{% if seo_canonical_url %}<link rel="canonical" href="{{ seo_canonical_url }}">{% endif %}{% endblock %}
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}Codeventra Labs | Software Development &amp; Digital Solutions{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Codeventra Labs builds websites, web applications, custom software, e-commerce solutions, AI tools, and automation around practical needs.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}TechBullion Hub | Software Development &amp; Digital Solutions{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}TechBullion Hub builds websites, web applications, custom software, e-commerce solutions, AI tools, and automation around practical needs.{% endblock %}">
     {% block og_url %}{% if seo_canonical_url %}<meta property="og:url" content="{{ seo_canonical_url }}">{% endif %}{% endblock %}
-    <meta property="og:site_name" content="Codeventra Labs">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{% block twitter_title %}Codeventra Labs | Software Development &amp; Digital Solutions{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}Codeventra Labs builds websites, web applications, custom software, e-commerce solutions, AI tools, and automation around practical needs.{% endblock %}">
+    <meta property="og:site_name" content="TechBullion Hub">
+    <meta name="twitter:card" content="{% block twitter_card %}summary{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}TechBullion Hub | Software Development &amp; Digital Solutions{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}TechBullion Hub builds websites, web applications, custom software, e-commerce solutions, AI tools, and automation around practical needs.{% endblock %}">
     {% if seo_structured_data %}<script type="application/ld+json">{{ seo_structured_data }}</script>{% endif %}
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">

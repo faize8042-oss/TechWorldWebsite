@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ section|title }}{% if page_obj.number > 1 %} – Page {{ page_obj.number }}{% endif %} | TechBullion Hub{% endblock %}
+{% block meta_description %}{% if section == 'blog' %}Engineering perspectives and practical insights from TechBullion Hub.{% else %}Company announcements and industry news from TechBullion Hub.{% endif %}{% endblock %}
+{% block og_description %}{% if section == 'blog' %}Practical guides to web development, software, AI and automation from TechBullion Hub.{% else %}Technology updates and company announcements from TechBullion Hub.{% endif %}{% endblock %}
+{% block twitter_description %}{% if section == 'blog' %}Practical guides to web development, software, AI and automation from TechBullion Hub.{% else %}Technology updates and company announcements from TechBullion Hub.{% endif %}{% endblock %}
+{% block og_title %}{{ section|title }} | TechBullion Hub{% endblock %}
+{% block twitter_title %}{{ section|title }} | TechBullion Hub{% endblock %}
+{% block robots %}{% if query or selected %}noindex, follow{% elif seo_indexing_enabled %}index, follow{% else %}noindex, nofollow{% endif %}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/publishing.css' %}">{% endblock %}
+{% block content %}
+<section class="container publishing-section">
+    <nav class="publishing-section-nav" aria-label="Reading sections">
+        <a href="{% url 'blog:list' %}"{% if section == 'blog' %} aria-current="page"{% endif %}>Blog</a>
+        <a href="{% url 'news:list' %}"{% if section == 'news' %} aria-current="page"{% endif %}>News</a>
+        <a href="{% url 'projects:list' %}">Projects &amp; tools <span aria-hidden="true">&#8599;</span></a>
+    </nav>
+    <header class="publishing-heading">
+    <p class="eyebrow">TechBullion Hub</p>
+    <h1>{{ section|title }}</h1>
+    <p class="publishing-intro">{% if section == 'blog' %}Engineering perspectives and practical insights.{% else %}Company announcements and developments across our industry.{% endif %}</p>
+    </header>
+    {% if not preview %}
+    <form method="get" class="publishing-filters" role="search">
+        <div><label for="article-search">Search {{ section }}</label><input id="article-search" type="search" name="q" value="{{ query }}" maxlength="200"></div>
+        <div><label for="article-filter">{% if section == 'blog' %}Category{% else %}News type{% endif %}</label>
+        {% if section == 'blog' %}<select id="article-filter" name="category"><option value="">All categories</option>{% for category in filters %}<option value="{{ category.slug }}"{% if selected == category.slug %} selected{% endif %}>{{ category.name }}</option>{% endfor %}</select>
+        {% else %}<select id="article-filter" name="kind"><option value="">All news</option>{% for value,label in filters %}<option value="{{ value }}"{% if selected == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>{% endif %}</div>
+        <button class="button button-primary" type="submit">Search</button>
+        <a href="{% if section == 'blog' %}{% url 'blog:list' %}{% else %}{% url 'news:list' %}{% endif %}">Reset</a>
+    </form>
+    {% endif %}
+    <div class="publishing-layout">
+    <div>
+    <h2 class="publishing-section-title">{% if query or selected %}Search results{% else %}Latest {% if section == 'blog' %}articles{% else %}updates{% endif %}{% endif %}</h2>
+    <div class="publishing-grid">
+    {% for article in page_obj %}
+    <article class="publishing-card">
+        {% if article.cover_image %}<a class="publishing-image-link" href="{{ article.get_absolute_url }}" aria-label="Read {{ article.title }}"><img src="{{ article.get_image_url }}" alt="{{ article.image_alt }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="800" height="450"></a>{% endif %}
+        <div class="publishing-card-copy">
+        <p class="publishing-meta"><span class="publishing-category">{% if section == 'blog' %}{{ article.category }}{% else %}{{ article.get_kind_display }}{% endif %}</span><time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'M j, Y' }}</time></p>
+        <h3><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3><p>{{ article.summary }}</p>
+        <div class="publishing-card-bottom">{% if article.author_name %}<span>{{ article.author_name }}</span>{% endif %}<a href="{{ article.get_absolute_url }}">{% if article.reading_minutes %}{{ article.reading_minutes }} min read{% else %}Read article{% endif %} <span aria-hidden="true">&#8594;</span></a></div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="publishing-empty" role="status">
+        {% if query or selected %}<h2>No matching articles</h2><p>Try another search or reset the filters.</p>
+        {% else %}<h2>{% if section == 'blog' %}Insights are on the way{% else %}Stay connected{% endif %}</h2><p>{% if section == 'blog' %}Our published engineering articles will appear here.{% else %}Published announcements and industry updates will appear here.{% endif %}</p>{% endif %}
+    </div>
+    {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}<nav class="publishing-pagination" aria-label="Article pages">
+        {% if page_obj.has_previous %}<a href="?{{ page_query }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?{{ page_query }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+    </div>
+    <aside class="publishing-sidebar" aria-label="Explore TechBullion Hub">
+        <section class="publishing-sidebar-block"><span class="eyebrow">Explore</span><h2>Keep reading.</h2>
+            <p>Practical perspectives on technology and the work behind it.</p>
+            <a class="publishing-sidebar-link" href="{% url 'blog:list' %}">Engineering articles <span aria-hidden="true">&#8594;</span></a>
+            <a class="publishing-sidebar-link" href="{% url 'news:list' %}">News &amp; announcements <span aria-hidden="true">&#8594;</span></a>
+        </section>
+        <section class="publishing-sidebar-block publishing-sidebar-cta"><span class="eyebrow">From insight to action</span><h2>Put an idea to work.</h2>
+            <p>Explore our interactive tools or discuss a software project for your business.</p>
+            <a class="publishing-sidebar-link" href="{% url 'projects:list' %}">Explore projects <span aria-hidden="true">&#8594;</span></a>
+            <a class="publishing-sidebar-link" href="{% url 'contact:contact' %}">Discuss your project <span aria-hidden="true">&#8594;</span></a>
+        </section>
+    </aside>
+    </div>
+</section>
+{% endblock %}

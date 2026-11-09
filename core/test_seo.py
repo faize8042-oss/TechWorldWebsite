@@ -71,6 +71,8 @@ class SEOFoundationTests(TestCase):
             "about",
             "services",
             "projects:list",
+            "blog:list",
+            "news:list",
             "contact:contact",
             "privacy",
             "terms",
@@ -109,7 +111,7 @@ class SEOFoundationTests(TestCase):
             parsed.meta["twitter:description"], parsed.meta["og:description"]
         )
         self.assertEqual(urlparse(parsed.canonical).scheme, "https")
-        self.assertEqual(parsed.meta["robots"], "index, follow")
+        self.assertEqual(parsed.meta["robots"], "index, follow, max-image-preview:large")
 
     def test_project_metadata_is_escaped_and_limited(self):
         project = self.create_project(
@@ -150,11 +152,15 @@ class SEOFoundationTests(TestCase):
             "about",
             "services",
             "projects:list",
+            "blog:list",
+            "news:list",
             "contact:contact",
             "privacy",
             "terms",
         )]
         expected_paths.append(published.get_absolute_url())
+        expected_paths.extend('/projects/demos/' + slug + '/' for slug in (
+            'stock-planner', 'appointment-desk', 'quote-builder', 'support-triage'))
         self.assertCountEqual(
             locs,
             [f"https://example.org{path}" for path in expected_paths],
@@ -176,7 +182,9 @@ class SEOFoundationTests(TestCase):
                 "{http://www.sitemaps.org/schemas/sitemap/0.9}loc"
             )
         ]
-        self.assertEqual(len(locs), 7)
+        self.assertEqual(len(locs), 13)
+        for slug in ('stock-planner', 'appointment-desk', 'quote-builder', 'support-triage'):
+            self.assertIn('https://example.org/projects/demos/' + slug + '/', locs)
         self.assertIn("https://example.org/projects/", locs)
 
     def test_robots_txt_is_plain_text_and_only_advertises_configured_sitemap(self):
@@ -199,3 +207,4 @@ class SEOFoundationTests(TestCase):
         self.assertEqual([item["@type"] for item in payload], ["Organization", "WebSite"])
         self.assertTrue(all(item["url"] == "https://example.org" for item in payload))
         self.assertEqual(payload[0]["slogan"], "Engineering Ideas Into Reality.")
+        self.assertTrue(all(item['name'] == 'TechBullion Hub' for item in payload))

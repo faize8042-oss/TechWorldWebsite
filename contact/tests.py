@@ -57,15 +57,15 @@ class ContactFormTests(TestCase):
 
         mock_send_mail.assert_called_once()
         email = mock_send_mail.call_args.kwargs
-        self.assertIn("Codeventra Labs", email["subject"])
-        self.assertIn("Codeventra Labs", email["message"])
+        self.assertIn("TechBullion Hub", email["subject"])
+        self.assertIn("TechBullion Hub", email["message"])
 
     def test_site_pages_show_codeventra_brand(self):
         for path in ("/", "/services/", "/about/", "/projects/", self.url):
             with self.subTest(path=path):
                 response = self.client.get(path)
                 self.assertEqual(response.status_code, 200)
-                self.assertContains(response, "Codeventra")
+                self.assertContains(response, "TechBullion")
                 self.assertNotContains(response, "Tech World")
 
     def test_homepage_shows_tagline(self):
@@ -165,6 +165,15 @@ class ContactFormTests(TestCase):
             files={"attachment": corrupted_image},
         )
 
+        self.assertFalse(form.is_valid())
+        self.assertIn("attachment", form.errors)
+
+    @patch("contact.models.Image.open", side_effect=Image.DecompressionBombError("synthetic"))
+    def test_decompression_bomb_is_a_validation_error(self, mock_open):
+        form = ContactSubmissionForm(
+            data=self.valid_data,
+            files={"attachment": SimpleUploadedFile("large.png", b"synthetic")},
+        )
         self.assertFalse(form.is_valid())
         self.assertIn("attachment", form.errors)
 

@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Privacy Policy | Codeventra Labs{% endblock %}
-{% block og_title %}Privacy Policy | Codeventra Labs{% endblock %}
-{% block twitter_title %}Privacy Policy | Codeventra Labs{% endblock %}
+{% block title %}Privacy Policy | TechBullion Hub{% endblock %}
+{% block og_title %}Privacy Policy | TechBullion Hub{% endblock %}
+{% block twitter_title %}Privacy Policy | TechBullion Hub{% endblock %}
 
 {% block meta_description %}
-Learn how Codeventra Labs handles contact information, project enquiries,
+Learn how TechBullion Hub handles contact information, project enquiries,
 uploaded files, and website data.
 {% endblock %}
-{% block og_description %}Learn how Codeventra Labs handles contact information, project enquiries, uploaded files, and website data.{% endblock %}
-{% block twitter_description %}Learn how Codeventra Labs handles contact information, project enquiries, uploaded files, and website data.{% endblock %}
+{% block og_description %}Learn how TechBullion Hub handles contact information, project enquiries, uploaded files, and website data.{% endblock %}
+{% block twitter_description %}Learn how TechBullion Hub handles contact information, project enquiries, uploaded files, and website data.{% endblock %}
 
 {% block content %}
 <section class="section">
@@ -18,14 +18,16 @@ uploaded files, and website data.
             <p class="eyebrow">LEGAL INFORMATION</p>
             <h1 class="text-gradient">Privacy Policy</h1>
             <p>
-                This policy explains how Codeventra Labs handles information
+                This policy explains how TechBullion Hub handles information
                 when you visit our website or contact us about a project.
             </p>
+            <p>TechBullion Hub is operated by Faizan Yousuf in Lahore, Pakistan.
+                For privacy questions, email <a href="mailto:faize8042@gmail.com">faize8042@gmail.com</a>.</p>
         </div>
 
         <div class="card card-padding legal-content">
             <p>
-                <strong>Last updated:</strong> 14 October 2026
+                <strong>Last updated:</strong> 2 November 2026
             </p>
 
             <h2>1. Information We Collect</h2>
@@ -94,8 +96,9 @@ uploaded files, and website data.
                 We retain enquiry records and attachments only for as long
                 as reasonably needed for communication, project management,
                 legitimate operational needs, and applicable legal
-                obligations. A precise retention schedule should be
-                established and followed by the website operator.
+                obligations. Our policy is to remove unanswered enquiries and
+                their attachments after 90 days of inactivity. Records needed
+                for an active project or applicable legal obligations are handled separately.
             </p>
 
             <h2>6. Sharing and Service Providers</h2>
@@ -117,8 +120,9 @@ uploaded files, and website data.
             <p>
                 Depending on applicable law, you may have rights to request
                 access to, correction of, or deletion of your personal
-                information. Contact the website operator using the email
-                address displayed on our Contact page to make a request.
+                information. Use our
+                <a href="{% url 'contact:contact' %}">Contact form</a>
+                to send a privacy request to the website operator.
             </p>
 
             <h2>9. Children</h2>

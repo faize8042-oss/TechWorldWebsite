@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Our Work &amp; Projects | Codeventra Labs{% endblock %}
-{% block og_title %}Our Work &amp; Projects | Codeventra Labs{% endblock %}
-{% block twitter_title %}Our Work &amp; Projects | Codeventra Labs{% endblock %}
+{% block title %}Our Work &amp; Projects | TechBullion Hub{% endblock %}
+{% block og_title %}Our Work &amp; Projects | TechBullion Hub{% endblock %}
+{% block twitter_title %}Our Work &amp; Projects | TechBullion Hub{% endblock %}
 
 {% block meta_description %}
-Explore selected software, web development, e-commerce, and AI projects from Codeventra Labs.
+Explore selected software, web development, e-commerce, and AI projects from TechBullion Hub.
 {% endblock %}
-{% block og_description %}Explore published software, web development, e-commerce, and AI projects from Codeventra Labs.{% endblock %}
-{% block twitter_description %}Explore published software, web development, e-commerce, and AI projects from Codeventra Labs.{% endblock %}
+{% block og_description %}Explore published software, web development, e-commerce, and AI projects from TechBullion Hub.{% endblock %}
+{% block twitter_description %}Explore published software, web development, e-commerce, and AI projects from TechBullion Hub.{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/projects.css' %}">
@@ -21,11 +21,11 @@ Explore selected software, web development, e-commerce, and AI projects from Cod
         <div class="projects-hero-copy">
             <span class="eyebrow">Selected work</span>
             <h1 id="projects-title">Engineering ideas <span class="text-gradient">into reality.</span></h1>
-            <p>A closer look at the published digital products and software from Codeventra Labs, with the details available to share.</p>
+            <p>A closer look at the published digital products and software from TechBullion Hub, with the details available to share.</p>
             <a class="projects-hero-link" href="{% url 'contact:contact' %}">Have a project in mind? <span aria-hidden="true">↗</span></a>
         </div>
         <div class="projects-hero-aside" aria-hidden="true">
-            <span class="projects-hero-index">CV / WORK</span>
+            <span class="projects-hero-index">TH / WORK</span>
             <span class="projects-hero-rule"></span>
             <span class="projects-hero-caption">A selection of our work</span>
         </div>
@@ -51,7 +51,7 @@ Explore selected software, web development, e-commerce, and AI projects from Cod
                                 <span class="project-image-index" aria-hidden="true">PROJECT {{ forloop.counter|stringformat:"02d" }}</span>
                             {% else %}
                                 <div class="project-image-placeholder" aria-hidden="true">
-                                    <span class="placeholder-mark">CV<span>.</span></span>
+                                    <span class="placeholder-mark">TH<span>.</span></span>
                                     <span class="placeholder-category">{{ project.category }}</span>
                                     <span class="placeholder-line"></span>
                                     <span class="placeholder-note">Project preview</span>
@@ -77,13 +77,35 @@ Explore selected software, web development, e-commerce, and AI projects from Cod
             </div>
         {% else %}
             <div class="empty-portfolio" role="status">
-                <span class="empty-portfolio-mark" aria-hidden="true">CV<span>.</span></span>
+                <span class="empty-portfolio-mark" aria-hidden="true">TH<span>.</span></span>
                 <span class="eyebrow">Portfolio update</span>
-                <h2>No projects are published yet.</h2>
-                <p>There are no published projects to show right now. Get in touch to talk about what you’re looking to build.</p>
-                <a class="button button-primary" href="{% url 'contact:contact' %}">Contact Codeventra Labs <span aria-hidden="true">↗</span></a>
+                <h2>Explore what we can build.</h2>
+                <p>Try the working demonstrations below, or talk to us about a solution for your business.</p>
+                <a class="button button-primary" href="{% url 'contact:contact' %}">Contact TechBullion Hub <span aria-hidden="true">↗</span></a>
             </div>
         {% endif %}
+    </div>
+</section>
+<section class="section" aria-labelledby="demo-projects-title">
+    <div class="container">
+        <div class="section-heading">
+            <span class="eyebrow">Built to explore</span>
+            <h2 id="demo-projects-title">Practical tools for everyday business problems.</h2>
+            <p>Interactive TechBullion Hub demonstrations using sample data. These are examples of functionality, not client engagements or deployed business systems.</p>
+        </div>
+        <div class="project-grid">
+            {% for slug, demo in demos.items %}
+            <article class="project-card">
+                <div class="project-card-content">
+                    <span class="badge">Working demonstration</span>
+                    <h3><a href="{% url 'projects:demo' slug=slug %}">{{ demo.title }}</a></h3>
+                    <p>{{ demo.summary }}</p>
+                    <p class="featured-label">{{ demo.category }}</p>
+                    <a class="project-link" href="{% url 'projects:demo' slug=slug %}">Explore the project <span aria-hidden="true">&#8594;</span></a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
     </div>
 </section>
 {% endblock %}

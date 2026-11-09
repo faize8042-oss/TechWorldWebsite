@@ -45,7 +45,7 @@ def validate_attachment_content(file):
                             "Only valid PNG and JPEG images are allowed."
                         )
                     image.verify()
-            except (UnidentifiedImageError, OSError, SyntaxError) as exc:
+            except (UnidentifiedImageError, OSError, SyntaxError, Image.DecompressionBombError) as exc:
                 raise ValidationError(
                     "The uploaded image is invalid or corrupted."
                 ) from exc

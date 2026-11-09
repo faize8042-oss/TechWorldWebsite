@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ demo.title }} | TechBullion Hub{% endblock %}
+{% block meta_description %}{{ demo.summary }}{% endblock %}
+{% block og_title %}{{ demo.title }} | TechBullion Hub{% endblock %}
+{% block og_description %}{{ demo.summary }}{% endblock %}
+{% block twitter_title %}{{ demo.title }} | TechBullion Hub{% endblock %}
+{% block twitter_description %}{{ demo.summary }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/demo.css' %}">
+<script src="{% static 'js/demos.js' %}" defer></script>
+{% endblock %}
+{% block content %}
+<section class="section"><div class="container demo-shell">
+    <a href="{% url 'projects:list' %}">&#8592; All projects</a>
+    <p class="eyebrow">{{ demo.category }} / Working demonstration</p>
+    <h1>{{ demo.title }}</h1>
+    <p class="demo-lead">{{ demo.summary }}</p>
+    <div class="demo-context">
+        <article><h2>The problem</h2><p>{{ demo.problem }}</p></article>
+        <article><h2>The approach</h2><p>{{ demo.solution }}</p></article>
+    </div>
+    <section class="card card-padding demo-workspace" data-demo="{{ demo_slug }}" aria-labelledby="try-title">
+        <h2 id="try-title">Try it yourself</h2>
+        <p>Sample data only. Changes last until you leave or reload this page. Do not enter personal or confidential information.</p>
+        <noscript><p>Enable JavaScript to use this interactive demonstration.</p></noscript>
+        <form id="demo-form" class="demo-form">
+        {% if demo_slug == 'stock-planner' %}
+            <label>Units in stock<input name="stock" type="number" min="0" max="1000000" step="1" value="35" required></label>
+            <label>Average units sold per day<input name="demand" type="number" min="1" max="100000" step="1" value="8" required></label>
+            <label>Supplier lead time (days)<input name="lead" type="number" min="1" max="365" step="1" value="5" required></label>
+            <label>Safety stock (units)<input name="buffer" type="number" min="0" max="1000000" step="1" value="10" required></label>
+            <label>Target coverage (days)<input name="coverage" type="number" min="1" max="365" step="1" value="14" required></label>
+            <button class="button button-primary" type="submit">Calculate reorder</button>
+        {% elif demo_slug == 'appointment-desk' %}
+            <label>Appointment date<input name="date" type="date" required></label>
+            <label>Time (Pakistan Standard Time)<select name="time"><option>09:00</option><option>10:00</option><option>11:00</option><option>14:00</option><option>15:00</option><option>16:00</option></select></label>
+            <button class="button button-primary" type="submit">Reserve sample slot</button>
+        {% elif demo_slug == 'quote-builder' %}
+            <label>Service description<input name="item" maxlength="80" value="Website design" required></label>
+            <label>Quantity<input name="quantity" type="number" min="1" max="10000" value="1" step="1" required></label>
+            <label>Unit rate (PKR)<input name="rate" type="number" min="0" max="10000000" step="0.01" value="25000" required></label>
+            <label>Discount (%)<input name="discount" type="number" min="0" max="100" step="0.01" value="0" required></label>
+            <button class="button button-primary" type="submit">Add quote item</button>
+        {% else %}
+            <label>Sample request<input name="subject" maxlength="100" value="Customers cannot complete checkout" required></label>
+            <label>Impact<select name="impact"><option value="3">All users</option><option value="2">Several users</option><option value="1">One user</option></select></label>
+            <label>Urgency<select name="urgency"><option value="3">Work is blocked</option><option value="2">Workaround available</option><option value="1">General request</option></select></label>
+            <button class="button button-primary" type="submit">Prioritize request</button>
+        {% endif %}
+        </form>
+        <div id="demo-result" class="demo-result" role="status" aria-live="polite">Your results will appear here.</div>
+        <ul id="demo-records" class="demo-records" aria-label="Sample session records"></ul>
+        <button id="demo-reset" class="button button-secondary" type="button">Reset demonstration</button>
+    </section>
+    <aside class="demo-limit"><h2>What this demonstrates</h2><p>{{ demo.limit }}</p><p>Built with Django templates and JavaScript. A production version would need agreed requirements, access controls, persistent storage, and operational testing.</p></aside>
+    <a class="button button-primary" href="{% url 'contact:contact' %}">Discuss a similar project</a>
+</div></section>
+{% endblock %}

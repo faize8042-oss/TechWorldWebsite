@@ -1,0 +1,11 @@
+bind = 'unix:/run/preview/gunicorn.sock'
+workers = 2
+umask = 0o117
+worker_tmp_dir = '/tmp'
+secure_scheme_headers = {}
+forwarded_allow_ips = ''
+accesslog = None
+errorlog = '-'
+timeout = 30
+limit_request_line = 2048
+limit_request_fields = 40

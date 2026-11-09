@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ article.seo_title|default:article.title }} | TechBullion Hub{% endblock %}
+{% block meta_description %}{{ article.seo_description|default:article.summary|truncatechars:160 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block twitter_card %}{% if article.cover_image %}summary_large_image{% else %}summary{% endif %}{% endblock %}
+{% block og_title %}{{ article.seo_title|default:article.title }}{% endblock %}
+{% block twitter_title %}{{ article.seo_title|default:article.title }}{% endblock %}
+{% block og_description %}{{ article.seo_description|default:article.summary }}{% endblock %}
+{% block twitter_description %}{{ article.seo_description|default:article.summary }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/publishing.css' %}">
+{% if seo_indexing_enabled and article.cover_image %}
+<meta property="og:image" content="{{ seo_canonical_url }}image/">
+<meta property="og:image:alt" content="{{ article.image_alt }}">
+<meta name="twitter:image" content="{{ seo_canonical_url }}image/">
+<meta name="twitter:image:alt" content="{{ article.image_alt }}">
+{% endif %}
+{% if breadcrumb_schema %}<script type="application/ld+json">{{ breadcrumb_schema }}</script>{% endif %}
+{% if article_schema %}<script type="application/ld+json">{{ article_schema }}</script>{% endif %}
+{% endblock %}
+{% block content %}
+<article class="container publishing-section publishing-article">
+    <nav class="publishing-section-nav" aria-label="Article navigation"><a href="{% if section == 'blog' %}{% url 'blog:list' %}{% else %}{% url 'news:list' %}{% endif %}">&#8592; Back to {{ section|title }}</a><a href="{% if section == 'blog' %}{% url 'news:list' %}{% else %}{% url 'blog:list' %}{% endif %}">{% if section == 'blog' %}News{% else %}Blog{% endif %}</a></nav>
+    <header class="publishing-article-heading">
+    <p class="eyebrow">{% if section == 'blog' %}{{ article.category }}{% else %}{{ article.get_kind_display }}{% endif %}</p>
+    <h1>{{ article.title }}</h1>
+    <p class="publishing-intro">{{ article.summary }}</p>
+    <dl class="publishing-byline">
+        {% if article.author_name %}<div><dt>Written by</dt><dd>{% if article.author_name == 'Faizan Yousuf' %}<a href="{% url 'about' %}#faizan-yousuf">{{ article.author_name }}</a>{% else %}{{ article.author_name }}{% endif %}</dd></div>{% endif %}
+        <div><dt>Published</dt><dd><time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'M j, Y' }}</time></dd></div>
+        {% if reading_minutes %}<div><dt>Read time</dt><dd>{{ reading_minutes }} min</dd></div>{% endif %}
+        <div><dt>Section</dt><dd>{{ section|title }}</dd></div>
+    </dl>
+    </header>
+    <div class="publishing-layout publishing-reading-layout">
+    <div>
+    {% if article.cover_image %}<img class="publishing-cover" src="{{ article.get_image_url }}" alt="{{ article.image_alt }}" width="1200" height="675">{% endif %}
+    <div class="publishing-body">{{ article.body|linebreaks }}</div>
+    <a class="publishing-return" href="{% if section == 'blog' %}{% url 'blog:list' %}{% else %}{% url 'news:list' %}{% endif %}">&#8592; More from {{ section|title }}</a>
+    </div>
+    <aside class="publishing-sidebar" aria-label="More to explore">
+        {% if related_items %}<section class="publishing-sidebar-block"><h2>More from {{ section|title }}</h2>
+            {% for item in related_items %}<a class="publishing-sidebar-link" href="{{ item.get_absolute_url }}">{{ item.title }} <span aria-hidden="true">&#8594;</span></a>{% endfor %}
+        </section>{% endif %}
+        <section class="publishing-sidebar-block publishing-sidebar-cta"><span class="eyebrow">TechBullion Hub</span><h2>Build on the idea.</h2><p>Explore practical software demonstrations, or tell us what you want to create.</p><a class="publishing-sidebar-link" href="{% url 'projects:list' %}">Explore projects <span aria-hidden="true">&#8594;</span></a><a class="publishing-sidebar-link" href="{% url 'contact:contact' %}">Discuss a project <span aria-hidden="true">&#8594;</span></a></section>
+    </aside>
+    </div>
+</article>
+{% endblock %}

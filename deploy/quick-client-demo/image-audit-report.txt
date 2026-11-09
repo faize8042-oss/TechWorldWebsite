@@ -1,0 +1,37 @@
+Codeventra Labs existing image-content audit
+Image: techworld-django:local
+Expected image ID: sha256:69c0b8cdfa8a03b9517d6bd9a80bb1afc7c024ee355e78ac79effa3c62587cdf
+UTC: 2026-10-31T13:00:57.3521318Z
+Public exposure: NOT APPROVED. No image code is executed by this audit.
+Scope: configuration, history, all saved layers and reconstructed file inventory.
+Limits: heuristic detection cannot prove absence of secrets or malicious code; no runtime, dependency integrity, vulnerability or provenance certification.
+COUNT collected-static-files: 549
+COUNT environment-names-inspected: 7
+COUNT final-inventory-entries: 14512
+COUNT historical-files-scanned: 11137
+COUNT history-entries-inspected: 22
+COUNT labels-inspected: 0
+COUNT layer-entries-inspected: 15181
+COUNT required-distributions-present: 13
+COUNT saved-config-sha256-verified-against-name: 1
+COUNT saved-image-identity-verified: 1
+COUNT startup-files-inspected: 10
+COUNT static-source-files: 10
+COUNT template-files: 13
+COUNT verified-layers: 11
+FAIL cloud-or-service-token: 2
+FAIL credential-bearing-url: 18
+FAIL credential-file: 2
+FAIL data-key-log-or-nested-archive: 558
+FAIL dependency-integrity-native-compatibility-and-provenance-review-required: 1
+FAIL independent-startup-code-and-public-asset-review-required: 1
+FAIL literal-credential-assignment: 5
+FAIL private-state-or-unreviewed-tree: 6
+FAIL startup-dynamic-execution-or-network-reference: 2
+Inspection: COMPLETE (static checks only; manual gates remain unresolved)
+Verdict: FAIL
+Failure stage: content-policy
+Error category: mandatory-security-findings-or-review-evidence-missing
+Decision: reuse remains BLOCKED pending independent private review and separate exposure authorization.
+Temporary private spool: removed after exact ownership and path verification.
+Final verdict: FAIL; no automatic approval of image reuse or public exposure.

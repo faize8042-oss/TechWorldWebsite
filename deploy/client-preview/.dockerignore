@@ -1,0 +1,15 @@
+**
+!Dockerfile
+!.dockerignore
+!gunicorn.py
+!config/
+!config/*.py
+!core/
+!core/*.py
+!templates/
+!templates/**
+!static/
+!static/css/
+!static/css/*.css
+!static/js/
+!static/js/*.js

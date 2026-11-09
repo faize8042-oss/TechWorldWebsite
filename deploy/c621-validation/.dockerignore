@@ -1,0 +1,7 @@
+# Deny by default; only reviewed dependency inputs enter the build context.
+**
+!Dockerfile
+!.dockerignore
+!requirements.lock
+!wheelhouse/
+!wheelhouse/*.whl

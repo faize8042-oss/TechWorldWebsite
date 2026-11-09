@@ -22,7 +22,12 @@ env = environ.Env(
     DEBUG=(bool, False),
 )
 
-if not os.environ.get("CODEVENTRA_SKIP_DOTENV"):
+# Production never reads a repository .env or shared env_file.
+if os.environ.get("DEPLOYMENT_MODE", "development").strip().lower() == "production":
+    from config.production_database import load_runtime_environment, validate_production_settings
+    load_runtime_environment(os.environ)
+    validate_production_settings(os.environ)
+elif not os.environ.get("CODEVENTRA_SKIP_DOTENV"):
     environ.Env.read_env(BASE_DIR / ".env")
 
 
@@ -77,6 +82,9 @@ INSTALLED_APPS = [
     "projects",
     "contact",
     "analytics",
+    "publishing",
+    "blog",
+    "news",
 ]
 
 # Importing registers deployment-only system checks without network access.
@@ -138,6 +146,12 @@ DATABASES = {
     "default": env.db("DATABASE_URL"),
 }
 
+
+# The web login cannot select an elevated role via connection options.
+if DEPLOYMENT_MODE == "production":
+    DATABASES["default"]["OPTIONS"] = {"options": "-c search_path=public"}
+    POSTGRES_INITIALIZATION_USER = "cv_init"
+    PRODUCTION_CREDENTIAL_CONTRACT = "runtime-secret-v1"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -206,6 +220,7 @@ CONTACT_EMAIL = env("CONTACT_EMAIL")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_TIMEOUT = 15
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")

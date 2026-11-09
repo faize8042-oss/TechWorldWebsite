@@ -21,6 +21,7 @@ staticfiles/
 
 # Private contact attachments
 private_uploads/
+private_publishing/
 
 # Local IDE settings
 .idea/
@@ -53,8 +54,14 @@ Thumbs.db
 # Temporary debugging logs
 test-errors.txt
 test_errors.txt
+publishing_test_errors.txt
 
 # Runtime logs
 *.log
 # Local isolated validation evidence (retain on disk)
 /validation-results/
+
+# Reviewed provisioning source templates only; database dumps remain ignored.
+!/deploy/postgres/fresh.sql
+!/deploy/postgres/grants.sql
+!/deploy/postgres/inventory.sql
