@@ -3,8 +3,6 @@
 A Django website for software development services, practical technology articles,
 company news, and interactive portfolio demonstrations.
 
-**Planned domain:** `techbullionhub.net` (not yet purchased or deployed).
-
 **Operator:** Faizan Yousuf · Lahore, Pakistan
 
 **Public contact:** faize8042@gmail.com
