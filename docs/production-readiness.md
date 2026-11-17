@@ -1,5 +1,20 @@
 # Production deployment readiness
 
+## Publishing storage preparation (added 17 November 2026)
+
+The proposed production web service now persists Blog/News images in the private
+`private_publishing` named volume. Nginx does not mount that volume. Before the
+first production web startup, run the `publishing-storage-init` operator service
+with the approved application image and the same production Compose project.
+It sets only the volume root to UID 10001/GID 10002, mode 0700; it does not alter
+existing image files. It has no network or credentials and only the CHOWN capability.
+Do not reuse the development publishing volume for production.
+
+The initializer was tested with the local development image on a disposable QA
+volume, including non-root write access and exact-volume cleanup. Production
+image/runtime behavior and paired database/image backups still need verification
+on the real deployment. See [resume report](release-readiness-2026-11-17.md).
+
 This is a preparation guide. The application has not been deployed, the planned domain and DNS are unverified, and HTTPS has not been configured.
 
 See the proposed [deployment architecture](deployment-architecture.md), [hosting cost plan](hosting-cost-plan.md), and [launch checklist](launch-checklist.md) for the isolated production design. These are planning artifacts only; no production behavior has been verified.

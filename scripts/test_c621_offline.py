@@ -142,7 +142,7 @@ class RepositoryContracts(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.compose = (ROOT / 'deploy/compose.production.yaml').read_text()
-        cls.services = dict(re.findall(r'^  (\w+):\n(.*?)(?=^  \w+:|^\w+:|\Z)',
+        cls.services = dict(re.findall(r'^  ([\w-]+):\n(.*?)(?=^  [\w-]+:|^\w+:|\Z)',
                                       cls.compose.split('volumes:\n  gunicorn_socket:')[0], re.M | re.S))
 
     def test_no_shared_env_or_secret_interpolation(self):

@@ -46,3 +46,7 @@ publishing_test_errors.txt
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Separate local portfolio work; not part of this website image
+/portfolio-faizan/
+/faizan-portfolio-deploy.tar.gz

@@ -109,9 +109,11 @@ The offline runner uses synthetic settings, an in-memory SQLite database, local
 cache, and in-memory email. It does not read `.env` or contact the development
 database, Redis, or SMTP. It does not replace PostgreSQL runtime verification.
 
-**Latest recorded source validation:** 116 offline tests passed on 8 November
-2026. The final branding/SEO changes have not been retested in PostgreSQL because
-Docker Desktop's engine could not start during that session.
+**Latest validation — 17 November 2026:** 116 PostgreSQL tests passed; full live
+verifier 19 PASS / 0 FAIL / 3 SKIP. Docker recovered and the latest branding/SEO
+changes now run locally. Browser journeys, a development DB restore and disposable
+production-image-storage checks also passed. See the
+[current readiness report](docs/release-readiness-2026-11-17.md) for scope and limits.
 
 ## Editorial and operational tools
 
@@ -151,6 +153,7 @@ processes are running.
 
 ## Further documentation
 
+- [Current release readiness](docs/release-readiness-2026-11-17.md)
 - [Latest SEO implementation and content plan](docs/techbullionhub-seo-plan.md)
 - [Publishing editorial guide](docs/publishing-editorial-guide.md)
 - [Publishing verification](docs/publishing-security-verification.md)

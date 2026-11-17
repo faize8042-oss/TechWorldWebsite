@@ -1,5 +1,10 @@
 # TechBullion Hub SEO implementation — 8 November 2026
 
+**Update, 17 November:** Docker recovered; the changes are built and running
+locally, with 116 PostgreSQL tests passed and the live duplicate-metadata audit
+resolved. See [current readiness](release-readiness-2026-11-17.md). The domain and
+hosting remain unpurchased; indexing remains disabled.
+
 Owner-approved name: **TechBullion Hub**. Planned domain: **techbullionhub.net**.
 The owner has not purchased the domain. Primary focus: software services,
 supported by practical guides and technology news. Operator: Faizan Yousuf,

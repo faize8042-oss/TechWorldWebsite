@@ -117,7 +117,7 @@ if ($DiagnoseStartup) {
 
 Push-Location $root
 try {
-    Write-Host 'Codeventra Labs publishing verification (development HTTP, existing services only)'
+    Write-Host 'TechBullion Hub publishing verification (development HTTP, existing services only)'
     $python = $null
     $localPython = Join-Path $root '.venv/Scripts/python.exe'
     if (Test-Path -LiteralPath $localPython) { $python = $localPython }

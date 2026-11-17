@@ -69,7 +69,7 @@ def export(directory):
                 text = re.sub(r'<form\b.*?</form>', '<p role="note">' + note + '</p>', text, flags=re.S | re.I)
             text = re.sub(r'<meta\s+name="robots"[^>]*>', '<meta name="robots" content="noindex, nofollow, noarchive">', text, flags=re.I)
             notice = '<div role="note" style="padding:.6rem 1rem;text-align:center;background:#102b49;color:#fff;font:14px/1.5 sans-serif">Temporary client preview · Enquiry submissions disabled · Interactive tools use sample data</div>'
-            text = text.replace('<main id="main-content">', notice + '<main id="main-content">')
+            text = re.sub(r'<main\b[^>]*\bid="main-content"[^>]*>', lambda match: notice + match.group(0), text, count=1)
             parser = Links()
             parser.feed(text)
             for value in sorted(parser.urls):

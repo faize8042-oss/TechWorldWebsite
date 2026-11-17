@@ -69,6 +69,7 @@ services:
     volumes:
       - gunicorn_socket:/run/codeventra
       - private_uploads:/app/private_uploads
+      - private_publishing:/app/private_publishing
       - public_media:/app/media
     networks:
       - data
@@ -81,6 +82,27 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+
+  # Run once before first web startup; no credentials or network access.
+  publishing-storage-init:
+    profiles: [operator]
+    image: ${APP_IMAGE:?set APP_IMAGE to an approved immutable image digest}
+    restart: "no"
+    user: "0:0"
+    network_mode: none
+    entrypoint: ["python", "-c"]
+    command:
+      - "import os; p='/app/private_publishing'; assert os.path.isdir(p) and not os.path.islink(p); os.chmod(p, 0o700); os.chown(p, 10001, 10002)"
+    volumes:
+      - private_publishing:/app/private_publishing
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    mem_limit: 64m
+    cpus: 0.25
+    pids_limit: 16
     security_opt:
       - no-new-privileges:true
 
@@ -144,6 +166,7 @@ volumes:
   gunicorn_socket:
   postgres_data:
   private_uploads:
+  private_publishing:
   public_media:
 
 networks:
