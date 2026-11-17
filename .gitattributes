@@ -1,0 +1,2 @@
+# Keep Linux deployment scripts runnable when archives are made on Windows.
+*.sh text eol=lf
