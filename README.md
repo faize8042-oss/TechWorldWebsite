@@ -117,7 +117,13 @@ The offline runner uses synthetic settings, an in-memory SQLite database, local
 cache, and in-memory email. It does not read `.env` or contact the development
 database, Redis, or SMTP. It does not replace PostgreSQL runtime verification.
 
-**Latest validation — 17 November 2026:** 116 PostgreSQL tests passed; full live
+**Release package validation — 17 November 2026:** 123 application tests and 22
+operator/credential checks passed with the locked production dependencies. A fresh
+production-stack rehearsal passed, including PostgreSQL roles, HTTPS/private socket
+routing, content/image import, encrypted backup recovery and failed-backup restart.
+See the [deployment package report](docs/deployment-package-2026-11-17.md).
+
+**Development verification — earlier on 17 November 2026:** 116 PostgreSQL tests passed; full live
 verifier 19 PASS / 0 FAIL / 3 SKIP. Docker recovered and the latest branding/SEO
 changes now run locally. Browser journeys, a development DB restore and disposable
 production-image-storage checks also passed. See the
@@ -150,9 +156,12 @@ After purchasing and configuring the domain, follow the
 [SEO and content plan](docs/techbullionhub-seo-plan.md) to verify canonical URLs,
 structured data, Search Console ownership, and sitemap submission.
 
-The production Compose and Nginx files are deployment preparations, not evidence
-of a completed production deployment. Hosting, DNS, TLS, production email,
-monitoring, scheduled retention, and real backup/restore checks remain launch work.
+The [release package](deploy/release/README.md) automates deployment, HTTPS setup,
+backup and retention schedules, and verified indexing. Configure the purchased
+hosting/domain, sender credentials and backup destination, then run its supplied
+commands. Actual certificate issuance, inbox delivery, provider monitoring and
+off-server recovery verification still depend on those services. No production
+site has been deployed while hosting and the domain remain unpurchased.
 
 Temporary client previews export public pages into a read-only snapshot. Admin,
 private files, and enquiry submissions are unavailable there; interactive demos
@@ -161,7 +170,9 @@ processes are running.
 
 ## Further documentation
 
-- [Current release readiness](docs/release-readiness-2026-11-17.md)
+- [Deployment configuration and launch](deploy/release/README.md)
+- [Verified deployment package](docs/deployment-package-2026-11-17.md)
+- [Development readiness snapshot](docs/release-readiness-2026-11-17.md)
 - [Latest SEO implementation and content plan](docs/techbullionhub-seo-plan.md)
 - [Publishing editorial guide](docs/publishing-editorial-guide.md)
 - [Publishing verification](docs/publishing-security-verification.md)
