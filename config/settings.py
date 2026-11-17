@@ -50,6 +50,7 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # indexing is explicitly enabled. This is independent of DEBUG.
 SEO_SITE_URL = env("SEO_SITE_URL", default="").strip().rstrip("/")
 SEO_INDEXING_ENABLED = env.bool("SEO_INDEXING_ENABLED", default=False)
+PRODUCTION_LAUNCH_VERIFIED = env.bool("PRODUCTION_LAUNCH_VERIFIED", default=False)
 
 if SEO_SITE_URL:
     parsed_seo_site_url = urlsplit(SEO_SITE_URL)

@@ -30,6 +30,9 @@ htmlcov/
 media/
 backups/
 validation-results/
+release-artifacts/
+*.agekey
+release-config.local.json
 test-errors.txt
 test_errors.txt
 publishing_test_errors.txt

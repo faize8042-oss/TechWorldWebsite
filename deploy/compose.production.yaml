@@ -99,7 +99,7 @@ services:
       - private_publishing:/app/private_publishing
     read_only: true
     cap_drop: [ALL]
-    cap_add: [CHOWN]
+    cap_add: [CHOWN, FOWNER]
     mem_limit: 64m
     cpus: 0.25
     pids_limit: 16

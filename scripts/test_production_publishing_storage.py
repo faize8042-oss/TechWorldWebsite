@@ -12,7 +12,7 @@ class ProductionPublishingStorageTests(unittest.TestCase):
         self.assertNotIn('private_publishing', services['nginx'])
         init = services['publishing-storage-init']
         for requirement in ('profiles: [operator]', 'network_mode: none', 'cap_drop: [ALL]',
-                            'cap_add: [CHOWN]', '0o700', '10001, 10002'):
+                            'cap_add: [CHOWN, FOWNER]', '0o700', '10001, 10002'):
             self.assertIn(requirement, init)
         self.assertNotIn('secrets:', init)
         self.assertIn('  private_publishing:', source.split('\nvolumes:\n')[1])

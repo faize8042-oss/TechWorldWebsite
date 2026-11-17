@@ -40,6 +40,10 @@ class PrivacyAwareAnalyticsMiddleware:
 
         path = request.path
 
+        # Scheduled uptime checks are operational requests, not visitor traffic.
+        if request.META.get("HTTP_USER_AGENT") == "TechBullionHub-Health/1.0":
+            return response
+
         if path == "/robots.txt" or path == "/sitemap.xml":
             return response
 

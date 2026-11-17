@@ -87,8 +87,9 @@ def check_production_configuration(app_configs, **kwargs):
         error("Production requires the private socket proxy configuration.", "PRODUCTION_PROXY_TRANSPORT")
     if settings.MIDDLEWARE[0] != "config.middleware.TrustedProxyIPMiddleware":
         error("Transport validation must precede all other middleware.", "MIDDLEWARE")
-    if settings.SECURE_HSTS_SECONDS or settings.SECURE_HSTS_INCLUDE_SUBDOMAINS or settings.SECURE_HSTS_PRELOAD:
+    verified = getattr(settings, "PRODUCTION_LAUNCH_VERIFIED", False)
+    if (settings.SECURE_HSTS_SECONDS and not verified) or settings.SECURE_HSTS_INCLUDE_SUBDOMAINS or settings.SECURE_HSTS_PRELOAD:
         error("HSTS must remain disabled pending real HTTPS verification.", "HSTS_SECONDS")
-    if settings.SEO_INDEXING_ENABLED:
-        error("Indexing must remain disabled during C6.1.", "SEO_INDEXING_ENABLED")
+    if settings.SEO_INDEXING_ENABLED and not verified:
+        error("Indexing must remain disabled pending real HTTPS verification.", "SEO_INDEXING_ENABLED")
     return errors

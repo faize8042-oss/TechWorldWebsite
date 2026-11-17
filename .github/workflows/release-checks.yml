@@ -1,0 +1,22 @@
+name: Release checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Build locked production application
+        run: docker build -f deploy/release/Dockerfile -t techbullionhub:ci .
+      - name: Application regression tests
+        run: docker run --rm --network none --entrypoint python techbullionhub:ci scripts/test_launch_offline.py
+      - name: Operator input and secret permissions
+        run: docker run --rm --network none --user 0:0 --entrypoint python techbullionhub:ci scripts/test_release_operator.py
+      - name: Fresh production installation and encrypted recovery rehearsal
+        run: python3 scripts/test_release.py

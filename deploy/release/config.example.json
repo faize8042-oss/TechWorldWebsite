@@ -1,0 +1,12 @@
+{
+  "domain": "techbullionhub.net",
+  "contact_email": "faize8042@gmail.com",
+  "certificate_email": "faize8042@gmail.com",
+  "smtp_host": "smtp.your-provider.example",
+  "smtp_port": 587,
+  "smtp_user": "replace-with-your-smtp-user",
+  "from_email": "website@techbullionhub.net",
+  "smtp_ssl": false,
+  "backup_recipient": "replace-with-your-age-public-recipient",
+  "backup_directory": "/var/backups/techbullionhub"
+}

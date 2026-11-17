@@ -7,6 +7,11 @@ from .models import AnalyticsVisit
 
 @override_settings(ANALYTICS_HMAC_SECRET="test-only-analytics-secret")
 class AnalyticsMiddlewareTests(TestCase):
+    def test_scheduled_health_checks_do_not_inflate_visits(self):
+        response = self.client.get(reverse('home'), HTTP_USER_AGENT='TechBullionHub-Health/1.0')
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(AnalyticsVisit.objects.exists())
+
     def test_public_html_page_records_visit(self):
         response = self.client.get(reverse("home"))
 

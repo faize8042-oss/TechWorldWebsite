@@ -60,6 +60,9 @@ publishing_test_errors.txt
 *.log
 # Local isolated validation evidence (retain on disk)
 /validation-results/
+/release-artifacts/
+*.agekey
+release-config.local.json
 
 # Reviewed provisioning source templates only; database dumps remain ignored.
 !/deploy/postgres/fresh.sql

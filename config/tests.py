@@ -264,6 +264,15 @@ class SocketConfigurationChecksTests(DeploymentConfigurationTests):
         self.assert_setting_error(self.production_errors(SECURE_HSTS_SECONDS=60), "HSTS_SECONDS")
         self.assert_setting_error(self.production_errors(SEO_INDEXING_ENABLED=True), "SEO_INDEXING_ENABLED")
 
+    def test_verified_launch_allows_indexing_and_staged_hsts(self):
+        self.assertEqual(self.production_errors(PRODUCTION_LAUNCH_VERIFIED=True,
+            SEO_INDEXING_ENABLED=True, SECURE_HSTS_SECONDS=300), [])
+
+    def test_verified_launch_still_rejects_preload_and_subdomain_hsts(self):
+        for flag in ('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'SECURE_HSTS_PRELOAD'):
+            self.assert_setting_error(self.production_errors(PRODUCTION_LAUNCH_VERIFIED=True,
+                **{flag: True}), 'HSTS_SECONDS')
+
 
 class GunicornHookContractTests(SimpleTestCase):
     """Exercise our hook with fakes; this is not Linux Gunicorn validation."""

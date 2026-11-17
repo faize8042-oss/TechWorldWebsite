@@ -1,0 +1,13 @@
+f9596a2434512686473d50f96ff6207fbba49ae1a785dfac614df4aeb085674d  asgiref-3.13.0-py3-none-any.whl
+5965d974a5218a2b68a11dd1276434707f23886525c23f0598eccedaf4f4ca00  django-5.2.19-py3-none-any.whl
+8dbe8a57f0a540ab8abd6f54f230de5e99e3a2c9d797cb9caecb037bca3d47d8  django_environ-0.14.0-py3-none-any.whl
+d047a31cf94d83ef1465d7543ca66c6fc16695559b5f8d814d1b51df15110b92  django_ratelimit-4.1.0-py2.py3-none-any.whl
+ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d  gunicorn-23.0.0-py3-none-any.whl
+d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c  packaging-26.3-py3-none-any.whl
+78cb2c6865a35ab8ff8b75fd122f6033b92a62c82801110e48ddd6c936a45d91  pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+d2d7d04a1ce6dab4f5b27316bea3b52585cafa2f2d631e5b09dd69823f5c26f6  psycopg-3.3.9-py3-none-any.whl
+a99f0b9a19ed7a56bf5d6776456b8f15f5364db8853b0f5d184db394a45c391d  psycopg_binary-3.3.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f  redis-6.4.0-py3-none-any.whl
+3be5a72d04c873d690d7c6dedd33d6fae2ef82759881ceec02fc2efd0cba564f  sqlparse-0.6.1-py3-none-any.whl
+481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8  typing_extensions-4.16.0-py3-none-any.whl
+fc5e8c572e33ebf24795b47b6a7da8da3c00cff2349f5b04c02f28d0cc5a3cc2  whitenoise-6.12.0-py3-none-any.whl

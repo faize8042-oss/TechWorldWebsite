@@ -7,6 +7,14 @@ company news, and interactive portfolio demonstrations.
 
 **Public contact:** faize8042@gmail.com
 
+## Deploy after purchasing hosting
+
+The supported release targets a fresh Ubuntu 24.04 amd64 VPS with Docker support.
+The [deployment guide](deploy/release/README.md) provides the configuration fields
+and ready-to-run commands for installation, HTTPS, public content, encrypted
+backup, retention schedules and verified search indexing. Production dependencies
+are hash-locked separately from the development dependency ranges.
+
 The project previously used the name **Codeventra Labs**. Some Docker images,
 volumes, scripts, and historical documents retain the earlier names for continuity.
 
